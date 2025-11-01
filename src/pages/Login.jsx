@@ -31,8 +31,6 @@ const itemVariants = {
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [thnajaran, setThnajaran] = useState('');
-  const [thnajaranOptions, setThnajaranOptions] = useState([]);
   
   const [loading, setLoading] = useState(false);
   const [loadingTahunAjaran, setLoadingTahunAjaran] = useState(true);
@@ -59,8 +57,6 @@ const Login = () => {
         if (error.response?.status === 401) {
           localStorage.removeItem('adminToken');
           localStorage.removeItem('userData');
-          localStorage.removeItem('idthnajaran');
-          localStorage.removeItem('thnajaran');
           navigate('/login');
         }
         return Promise.reject(error);
@@ -73,42 +69,8 @@ const Login = () => {
     };
   }, [navigate]);
 
-  // Fetch tahun ajaran dari API - REAL DATA
-  useEffect(() => {
-    const fetchTahunAjaran = async () => {
-      try {
-        setLoadingTahunAjaran(true);
-        const response = await axios.get(`${API_URL}/tahun-ajaran`);
-        
-        if (response.data.success) {
-          setThnajaranOptions(response.data.data || []);
-        } else {
-          throw new Error(response.data.message);
-        }
-      } catch (err) {
-        console.error('Gagal mengambil data tahun ajaran:', err);
-        setError('Gagal memuat data tahun ajaran. Silakan refresh halaman.');
-        // Fallback ke dummy data jika API error
-        const dummyOptions = [
-          { idthnajaran: '1', thnajaran: '2023/2024' },
-          { idthnajaran: '2', thnajaran: '2024/2025' },
-        ];
-        setThnajaranOptions(dummyOptions);
-      } finally {
-        setLoadingTahunAjaran(false);
-      }
-    };
-
-    fetchTahunAjaran();
-  }, []);
-
   const handleLogin = async (e) => {
     e.preventDefault();
-    
-    if (!thnajaran) {
-      setError('Silakan pilih tahun ajaran terlebih dahulu.');
-      return;
-    }
 
     setLoading(true);
     setError('');
@@ -117,15 +79,12 @@ const Login = () => {
       const response = await axios.post(`${API_URL}/login`, {
         email,
         password,
-        idthnajaran: thnajaran,
       });
 
       if (response.data.success) {
         // Simpan semua data ke localStorage
         localStorage.setItem('adminToken', response.data.data.access_token);
         localStorage.setItem('userData', JSON.stringify(response.data.data.user));
-        localStorage.setItem('idthnajaran', response.data.data.idthnajaran);
-        localStorage.setItem('thnajaran', response.data.data.thnajaran);
         
         // Redirect ke dashboard
         navigate('/dashboard');
@@ -133,7 +92,6 @@ const Login = () => {
     } catch (err) {
       const errorMessage = err.response?.data?.message || 
                           err.response?.data?.errors?.email?.[0] ||
-                          err.response?.data?.errors?.idthnajaran?.[0] || 
                           'Terjadi kesalahan saat login';
       setError(errorMessage);
       console.error('Login error:', err);
@@ -209,29 +167,6 @@ const Login = () => {
                 required
                 className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 transition duration-200"
               />
-            </motion.div>
-            
-            <motion.div variants={itemVariants} className="relative">
-              <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <select
-                value={thnajaran}
-                onChange={(e) => setThnajaran(e.target.value)}
-                required
-                disabled={loadingTahunAjaran}
-                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 transition duration-200 appearance-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-              >
-                <option value="" disabled>
-                  {loadingTahunAjaran ? 'Memuat tahun ajaran...' : 'Pilih Tahun Ajaran'}
-                </option>
-                {thnajaranOptions.map((opt) => (
-                  <option key={opt.idthnajaran} value={opt.idthnajaran}>
-                    {opt.thnajaran}
-                  </option>
-                ))}
-              </select>
-              {loadingTahunAjaran && (
-                <Loader className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 animate-spin" />
-              )}
             </motion.div>
 
             <motion.div variants={itemVariants}>
