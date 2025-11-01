@@ -10,8 +10,6 @@ import {
   BookOpen,
   BarChart2,
   UserCheck,
-  RefreshCw, // Icon untuk sinkronisasi
-  Loader, // Icon untuk loading
 } from "lucide-react";
 import { Line } from "react-chartjs-2";
 import {
@@ -168,7 +166,6 @@ const Dashboard = () => {
   const [chartData, setChartData] = useState({});
   const [recentGuests, setRecentGuests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isSyncing, setIsSyncing] = useState(false);
   const [notification, setNotification] = useState(null); // TAMBAH STATE INI
 
   // State untuk filter
@@ -184,7 +181,6 @@ const Dashboard = () => {
 
   const fetchDashboard = async () => {
     try {
-      // Tidak perlu setLoading(true) di sini agar refresh tidak berkedip
       const res = await axios.get(`${API_URL}/dashboard`);
       const data = res.data;
 
@@ -267,60 +263,7 @@ const Dashboard = () => {
       </div>
     );
   };
-
-  // Fungsi untuk memanggil API sinkronisasi
-  const handleSync = async () => {
-    if (isSyncing) return; // Prevent multiple clicks
-
-    setIsSyncing(true);
-
-    try {
-      const response = await axios.post(
-        `${API_URL}/sync-manual`,
-        {},
-        {
-          timeout: 300000, // 5 minutes timeout untuk proses yang lama
-        }
-      );
-
-      if (response.data.success) {
-        showNotif(
-          "success",
-          response.data.message ||
-            "✅ Sinkronisasi berhasil! Data sudah diperbarui."
-        );
-
-        // Refresh data langsung
-        await fetchDashboard();
-      } else {
-        showNotif(
-          "error",
-          response.data.message || "❌ Sinkronisasi gagal! Silakan coba lagi."
-        );
-      }
-    } catch (error) {
-      console.error("Sync error details:", error);
-
-      let errorMessage = "Terjadi kesalahan saat sinkronisasi";
-
-      if (error.code === "ECONNABORTED") {
-        errorMessage =
-          "Sinkronisasi timeout. Proses mungkin masih berjalan di server.";
-      } else if (error.response?.status === 500) {
-        errorMessage =
-          "Error server: " +
-          (error.response.data.message || "Internal Server Error");
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      showNotif("error", errorMessage);
-    } finally {
-      setIsSyncing(false);
-    }
-  };
+  
   useEffect(() => {
     setLoading(true);
     fetchDashboard();
@@ -412,45 +355,16 @@ const Dashboard = () => {
             Berikut adalah ringkasan data dari sistem Anda.
           </motion.p>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <button
-            onClick={handleSync}
-            disabled={isSyncing}
-            className={`flex items-center justify-center gap-2 px-4 py-2 font-semibold text-white rounded-lg shadow-md transition-colors duration-300 ${
-              isSyncing
-                ? "bg-gray-500 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            }`}
-          >
-            {isSyncing ? (
-              <>
-                {" "}
-                <Loader className="w-5 h-5 animate-spin" />{" "}
-                <span>Menyinkronkan...</span>{" "}
-              </>
-            ) : (
-              <>
-                {" "}
-                <RefreshCw className="w-5 h-5" /> <span>Sinkronkan Data</span>{" "}
-              </>
-            )}
-          </button>
-        </motion.div>
       </div>
 
       <motion.div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         {loading ? (
-          Array.from({ length: 5 }).map((_, i) => <StatCardSkeleton key={i} />)
+          Array.from({ length: 4 }).map((_, i) => <StatCardSkeleton key={i} />)
         ) : (
           <>
             <motion.div variants={itemVariants}>
@@ -460,15 +374,6 @@ const Dashboard = () => {
                 icon={<GraduationCap size={48} />}
                 color="from-blue-500 to-blue-600"
                 link="/siswa"
-              />
-            </motion.div>
-            <motion.div variants={itemVariants}>
-              <StatCard
-                title="Total Orang Tua"
-                value={stats.totalOrangtua}
-                icon={<Users size={48} />}
-                color="from-green-500 to-green-600"
-                link="/orangtua"
               />
             </motion.div>
             <motion.div variants={itemVariants}>
