@@ -33,7 +33,6 @@ const Login = () => {
   const [password, setPassword] = useState('');
   
   const [loading, setLoading] = useState(false);
-  const [loadingTahunAjaran, setLoadingTahunAjaran] = useState(true);
   const [error, setError] = useState('');
   
   const navigate = useNavigate();
@@ -172,7 +171,7 @@ const Login = () => {
             <motion.div variants={itemVariants}>
               <button
                 type="submit"
-                disabled={loading || loadingTahunAjaran}
+                disabled={loading}
                 className="w-full flex items-center justify-center py-3 px-6 rounded-lg bg-sky-500 text-white font-semibold hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-all duration-300 disabled:bg-sky-300 disabled:cursor-not-allowed"
               >
                 {loading ? <Loader className="animate-spin w-6 h-6" /> : 'Masuk'}
