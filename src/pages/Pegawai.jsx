@@ -4,23 +4,16 @@ import {
   Search,
   Info,
   X,
-  ChevronLeft,
-  ChevronRight,
   User,
-  School,
-  BookUser,
   Home,
-  Briefcase,
-  FileText,
-  HeartHandshake,
-  Banknote,
-  ShieldCheck,
   CheckCircle,
   AlertTriangle,
   XCircle,
-  Award,
-  GraduationCap,
-  Users,
+  Plus,
+  Trash2,
+  Edit,
+  Save,
+  Filter,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -196,7 +189,13 @@ const DetailSection = ({ title, icon, children }) => (
   </div>
 );
 
-const PegawaiDetailModal = ({ pegawai, onClose, loading }) => {
+const PegawaiDetailModal = ({
+  pegawai,
+  onClose,
+  loading,
+  onEdit,
+  onDelete,
+}) => {
   if (!pegawai && !loading) return null;
 
   // Fungsi untuk format nomor WhatsApp
@@ -218,7 +217,25 @@ const PegawaiDetailModal = ({ pegawai, onClose, loading }) => {
       ) : (
         <div className="space-y-6 max-h-[85vh] overflow-y-auto">
           {/* FOTO DAN IDENTITAS UTAMA */}
-          <div className="text-center bg-gray-50 p-6 rounded-xl">
+          <div className="text-center bg-gray-50 p-6 rounded-xl relative">
+            {/* FLOATING ACTION BUTTONS */}
+            <div className="absolute top-4 right-4 flex gap-2">
+              <button
+                onClick={() => onEdit(pegawai)}
+                className="bg-yellow-500 text-white p-2.5 rounded-lg hover:bg-yellow-600 transition shadow-lg"
+                title="Edit Data"
+              >
+                <Edit size={18} />
+              </button>
+              <button
+                onClick={() => onDelete(pegawai)}
+                className="bg-red-500 text-white p-2.5 rounded-lg hover:bg-red-600 transition shadow-lg"
+                title="Hapus Data"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+
             <div className="w-32 h-32 bg-gray-200 rounded-full mx-auto flex items-center justify-center">
               <User size={48} className="text-gray-400" />
             </div>
@@ -251,7 +268,7 @@ const PegawaiDetailModal = ({ pegawai, onClose, loading }) => {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-3 bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-all duration-300 font-medium text-lg shadow-lg"
               >
-                <IconWhatsApp/>
+                <IconWhatsApp />
                 Hubungi via WhatsApp
               </a>
               <p className="text-sm text-gray-500 mt-2">
@@ -276,6 +293,297 @@ const PegawaiDetailModal = ({ pegawai, onClose, loading }) => {
   );
 };
 
+// MODAL TAMBAH PEGAWAI
+const TambahPegawaiModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  loading,
+  formData,
+  onFormChange,
+  jabatans,
+}) => {
+  if (!isOpen) return null;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="Tambah Pegawai Baru">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* NIP */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            NIP <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="nip"
+            value={formData.nip}
+            onChange={onFormChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+            placeholder="Masukkan NIP"
+          />
+        </div>
+
+        {/* Nama Pegawai */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Nama Pegawai <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="nama_pegawai"
+            value={formData.nama_pegawai}
+            onChange={onFormChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+            placeholder="Masukkan nama lengkap pegawai"
+          />
+        </div>
+
+        {/* Jabatan */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Jabatan <span className="text-red-500">*</span>
+          </label>
+          <select
+            name="jabatan_id"
+            value={formData.jabatan_id}
+            onChange={onFormChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+          >
+            <option value="">Pilih Jabatan</option>
+            {jabatans.map((jabatan) => (
+              <option key={jabatan.id} value={jabatan.id}>
+                {jabatan.nama_jabatan}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Kontak */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Kontak
+          </label>
+          <input
+            type="text"
+            name="kontak"
+            value={formData.kontak}
+            onChange={onFormChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+            placeholder="Nomor telepon/WhatsApp"
+          />
+        </div>
+
+        {/* Tombol Action */}
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+          >
+            Batal
+          </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center gap-2 disabled:opacity-50"
+          >
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Menyimpan...
+              </>
+            ) : (
+              <>
+                <Plus size={16} />
+                Simpan
+              </>
+            )}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
+};
+
+// MODAL EDIT PEGAWAI
+const EditPegawaiModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  loading,
+  formData,
+  onFormChange,
+  pegawai,
+  jabatans,
+}) => {
+  if (!isOpen || !pegawai) return null;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData, pegawai.id);
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="Edit Data Pegawai">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* NIP */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            NIP <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="nip"
+            value={formData.nip}
+            onChange={onFormChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+            placeholder="Masukkan NIP"
+          />
+        </div>
+
+        {/* Nama Pegawai */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Nama Pegawai <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="nama_pegawai"
+            value={formData.nama_pegawai}
+            onChange={onFormChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+            placeholder="Masukkan nama lengkap pegawai"
+          />
+        </div>
+
+        {/* Jabatan */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Jabatan <span className="text-red-500">*</span>
+          </label>
+          <select
+            name="jabatan_id"
+            value={formData.jabatan_id}
+            onChange={onFormChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+          >
+            <option value="">Pilih Jabatan</option>
+            {jabatans.map((jabatan) => (
+              <option key={jabatan.id} value={jabatan.id}>
+                {jabatan.nama_jabatan}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Kontak */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Kontak
+          </label>
+          <input
+            type="text"
+            name="kontak"
+            value={formData.kontak}
+            onChange={onFormChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+            placeholder="Nomor telepon/WhatsApp"
+          />
+        </div>
+
+        {/* Tombol Action */}
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+          >
+            Batal
+          </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center gap-2 disabled:opacity-50"
+          >
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Menyimpan...
+              </>
+            ) : (
+              <>
+                <Save size={16} />
+                Simpan Perubahan
+              </>
+            )}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
+};
+
+// MODAL KONFIRMASI HAPUS
+const DeleteConfirmationModal = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  data,
+  loading,
+}) => (
+  <Modal isOpen={isOpen} onClose={onClose} title="Konfirmasi Hapus">
+    <div className="text-center">
+      <AlertTriangle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        Hapus Data Pegawai?
+      </h3>
+      <p className="text-gray-600 mb-6">
+        Apakah Anda yakin ingin menghapus data pegawai{" "}
+        <strong>{data?.nama_pegawai}</strong>{" "}
+        {data?.nip && `(NIP: ${data?.nip})`}? Tindakan ini tidak dapat
+        dibatalkan.
+      </p>
+      <div className="flex justify-center gap-3">
+        <button
+          onClick={onClose}
+          disabled={loading}
+          className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition disabled:opacity-50"
+        >
+          Batal
+        </button>
+        <button
+          onClick={onConfirm}
+          disabled={loading}
+          className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition flex items-center gap-2 disabled:opacity-50"
+        >
+          {loading ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              Menghapus...
+            </>
+          ) : (
+            <>
+              <Trash2 size={16} />
+              Hapus
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  </Modal>
+);
+
 // =================================================================
 // KOMPONEN UTAMA HALAMAN PEGAWAI
 // =================================================================
@@ -295,6 +603,149 @@ const Pegawai = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
 
+  const [selectedJabatan, setSelectedJabatan] = useState("");
+  const [jabatans, setJabatans] = useState([]);
+
+  // State untuk CRUD operations
+  const [isTambahModalOpen, setIsTambahModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [pegawaiToEdit, setPegawaiToEdit] = useState(null);
+  const [pegawaiToDelete, setPegawaiToDelete] = useState(null);
+
+  const [formData, setFormData] = useState({
+    nip: "",
+    nama_pegawai: "",
+    jabatan_id: "",
+    kontak: "",
+  });
+
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [loadingEdit, setLoadingEdit] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
+  const resetForm = () => {
+    setFormData({
+      nip: "",
+      nama_pegawai: "",
+      jabatan_id: "",
+      kontak: "",
+    });
+  };
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Fetch data jabatan untuk dropdown
+  const fetchJabatans = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API_URL}/pegawai-jabatan/list`);
+      if (response.data.success) {
+        setJabatans(response.data.data);
+      }
+    } catch (err) {
+      console.error("Error fetching jabatans:", err);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchJabatans();
+  }, [fetchJabatans]);
+
+  const handleTambahPegawai = async (data) => {
+    setLoadingSubmit(true);
+    try {
+      const response = await axios.post(`${API_URL}/pegawai`, data);
+      if (response.data.success) {
+        showNotif(
+          "success",
+          response.data.message || "Pegawai berhasil ditambahkan!"
+        );
+        setIsTambahModalOpen(false);
+        resetForm();
+        fetchData(currentPage, debouncedTerm, rowsPerPage, selectedJabatan);
+      }
+    } catch (err) {
+      // HANDLING ERROR VALIDASI (422)
+      if (err.response?.status === 422 && err.response?.data?.errors) {
+        const errors = err.response.data.errors;
+        // Ambil error pertama untuk ditampilkan
+        const firstError = Object.values(errors)[0][0];
+        showNotif("error", firstError);
+      } else {
+        // HANDLING ERROR LAINNYA
+        const errorMessage =
+          err.response?.data?.message || "Gagal menambah pegawai";
+        showNotif("error", errorMessage);
+      }
+    } finally {
+      setLoadingSubmit(false);
+    }
+  };
+
+  const handleEditPegawai = async (data, id) => {
+    setLoadingEdit(true);
+    try {
+      const response = await axios.put(`${API_URL}/pegawai/${id}`, data);
+      if (response.data.success) {
+        showNotif(
+          "success",
+          response.data.message || "Data pegawai berhasil diupdate!"
+        );
+        setIsEditModalOpen(false);
+        setPegawaiToEdit(null);
+        resetForm();
+        fetchData(currentPage, debouncedTerm, rowsPerPage, selectedJabatan);
+        setIsModalOpen(false);
+      }
+    } catch (err) {
+      // HANDLING ERROR VALIDASI (422)
+      if (err.response?.status === 422 && err.response?.data?.errors) {
+        const errors = err.response.data.errors;
+        // Ambil error pertama untuk ditampilkan
+        const firstError = Object.values(errors)[0][0];
+        showNotif("error", firstError);
+      } else {
+        // HANDLING ERROR LAINNYA
+        const errorMessage =
+          err.response?.data?.message || "Gagal mengupdate pegawai";
+        showNotif("error", errorMessage);
+      }
+    } finally {
+      setLoadingEdit(false);
+    }
+  };
+
+  const confirmDeletePegawai = async () => {
+    setLoadingDelete(true);
+    try {
+      const response = await axios.delete(
+        `${API_URL}/pegawai/${pegawaiToDelete.id}`
+      );
+      if (response.data.success) {
+        showNotif(
+          "success",
+          response.data.message || "Pegawai berhasil dihapus!"
+        );
+        setIsDeleteModalOpen(false);
+        setPegawaiToDelete(null);
+        fetchData(currentPage, debouncedTerm, rowsPerPage, selectedJabatan);
+        setIsModalOpen(false);
+      }
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message || "Gagal menghapus pegawai";
+      showNotif("error", errorMessage);
+    } finally {
+      setLoadingDelete(false);
+    }
+  };
+
   const showNotif = (type, text) => setNotification({ type, text });
 
   useEffect(() => {
@@ -305,12 +756,17 @@ const Pegawai = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const fetchData = useCallback(async (page, search, perPage) => {
+  const fetchData = useCallback(async (page, search, perPage, jabatan) => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API_URL}/pegawai`, {
-        params: { page, search, rows_per_page: perPage },
-      });
+      const params = {
+        page,
+        search,
+        rows_per_page: perPage,
+        ...(jabatan && { jabatan }),
+      };
+
+      const response = await axios.get(`${API_URL}/pegawai`, { params });
 
       // Sesuaikan dengan response baru
       if (response.data.success) {
@@ -332,8 +788,8 @@ const Pegawai = () => {
   }, []);
 
   useEffect(() => {
-    fetchData(currentPage, debouncedTerm, rowsPerPage);
-  }, [currentPage, debouncedTerm, rowsPerPage, fetchData]);
+    fetchData(currentPage, debouncedTerm, rowsPerPage, selectedJabatan);
+  }, [currentPage, debouncedTerm, rowsPerPage, selectedJabatan, fetchData]);
 
   const handleViewDetail = async (idpegawai) => {
     setIsModalOpen(true);
@@ -386,17 +842,84 @@ const Pegawai = () => {
         </div>
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-          <div className="relative w-full md:w-80">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Cari nama atau NIP..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-11 pr-4 py-2.5 border border-gray-300 rounded-lg w-full bg-gray-50 focus:ring-2 focus:ring-sky-500 outline-none transition"
-            />
+          <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+            {/* Filter Jabatan */}
+            <div className="relative w-full md:w-64">
+              <Filter className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <select
+                value={selectedJabatan}
+                onChange={(e) => {
+                  setSelectedJabatan(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="pl-11 pr-4 py-2.5 border border-gray-300 rounded-lg w-full bg-gray-50 focus:ring-2 focus:ring-sky-500 outline-none transition appearance-none"
+              >
+                <option value="">Semua Jabatan</option>
+                {jabatans.map((jabatan) => (
+                  <option key={jabatan.id} value={jabatan.nama_jabatan}>
+                    {jabatan.nama_jabatan}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Search Input */}
+            <div className="relative w-full md:w-80">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Cari nama atau NIP pegawai ..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-11 pr-4 py-2.5 border border-gray-300 rounded-lg w-full bg-gray-50 focus:ring-2 focus:ring-sky-500 outline-none transition"
+              />
+            </div>
+
+            {/* Clear Filters Button */}
+            {(selectedJabatan || searchTerm) && (
+              <button
+                onClick={() => {
+                  setSelectedJabatan("");
+                  setSearchTerm("");
+                  setCurrentPage(1);
+                }}
+                className="px-4 py-2.5 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition flex items-center gap-2 w-full md:w-auto justify-center"
+              >
+                <X size={16} />
+                Hapus Filter
+              </button>
+            )}
           </div>
+
+          {/* Tombol Tambah - Paling Kanan */}
+          <button
+            onClick={() => setIsTambahModalOpen(true)}
+            className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2.5 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 font-medium flex items-center gap-2 shadow-lg"
+          >
+            <Plus size={20} />
+            Tambah Pegawai
+          </button>
         </div>
+
+        {/* Active Filters Info */}
+        {(selectedJabatan || searchTerm) && (
+          <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="flex items-center gap-2 text-sm text-blue-800">
+              <Filter size={16} />
+              <span>Filter Aktif:</span>
+              {selectedJabatan && (
+                <span className="bg-blue-100 px-2 py-1 rounded text-xs">
+                  Jabatan: {selectedJabatan}
+                </span>
+              )}
+              {searchTerm && (
+                <span className="bg-blue-100 px-2 py-1 rounded text-xs">
+                  Pencarian: "{searchTerm}"
+                </span>
+              )}
+            </div>
+          </div>
+        )}
 
         {loading ? (
           <LoadingTable rowsPerPage={rowsPerPage} />
@@ -449,12 +972,15 @@ const Pegawai = () => {
                       {p.kontak || "-"}
                     </td>
                     <td className="px-3 py-3 whitespace-nowrap text-center">
-                      <button
-                        onClick={() => handleViewDetail(p.id)}
-                        className="bg-sky-100 text-sky-800 font-semibold p-2 rounded-lg hover:bg-sky-200 transition flex items-center gap-1 mx-auto"
-                      >
-                        <Info className="w-4 h-4" /> Detail
-                      </button>
+                      <div className="flex justify-center gap-2">
+                        <button
+                          onClick={() => handleViewDetail(p.id)}
+                          className="bg-sky-100 text-sky-800 font-semibold p-2 rounded-lg hover:bg-sky-200 transition flex items-center gap-1 mx-auto"
+                          title="Detail"
+                        >
+                          <Info className="w-4 h-4" /> Detail
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -526,6 +1052,74 @@ const Pegawai = () => {
             pegawai={selectedPegawai}
             onClose={closeModal}
             loading={loadingDetail}
+            onEdit={(pegawai) => {
+              setPegawaiToEdit(pegawai);
+              setFormData({
+                nip: pegawai.nip || "",
+                nama_pegawai: pegawai.nama_pegawai,
+                jabatan_id: pegawai.jabatan_id,
+                kontak: pegawai.kontak || "",
+              });
+              setIsEditModalOpen(true);
+            }}
+            onDelete={(pegawai) => {
+              setPegawaiToDelete(pegawai);
+              setIsDeleteModalOpen(true);
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* MODAL TAMBAH PEGAWAI */}
+      <AnimatePresence>
+        {isTambahModalOpen && (
+          <TambahPegawaiModal
+            isOpen={isTambahModalOpen}
+            onClose={() => {
+              setIsTambahModalOpen(false);
+              resetForm();
+            }}
+            onSubmit={handleTambahPegawai}
+            loading={loadingSubmit}
+            formData={formData}
+            onFormChange={handleFormChange}
+            jabatans={jabatans}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* MODAL EDIT PEGAWAI */}
+      <AnimatePresence>
+        {isEditModalOpen && (
+          <EditPegawaiModal
+            isOpen={isEditModalOpen}
+            onClose={() => {
+              setIsEditModalOpen(false);
+              setPegawaiToEdit(null);
+              resetForm();
+            }}
+            onSubmit={handleEditPegawai}
+            loading={loadingEdit}
+            formData={formData}
+            onFormChange={handleFormChange}
+            pegawai={pegawaiToEdit}
+            jabatans={jabatans}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* MODAL KONFIRMASI HAPUS */}
+      <AnimatePresence>
+        {isDeleteModalOpen && (
+          <DeleteConfirmationModal
+            isOpen={isDeleteModalOpen}
+            onClose={() => {
+              setIsDeleteModalOpen(false);
+              setPegawaiToDelete(null);
+            }}
+            onConfirm={confirmDeletePegawai}
+            data={pegawaiToDelete}
+            loading={loadingDelete}
           />
         )}
       </AnimatePresence>
