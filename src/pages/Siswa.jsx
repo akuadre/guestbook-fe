@@ -11,7 +11,7 @@ import {
   BookUser,
   Home,
   Briefcase,
-  FileText,
+  Pencil,
   HeartHandshake,
   Banknote,
   ShieldCheck,
@@ -19,7 +19,10 @@ import {
   AlertTriangle,
   XCircle,
   Filter,
-  Plus
+  Plus,
+  Trash2,
+  Edit,
+  Save,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -143,7 +146,7 @@ const LoadingTable = ({ rowsPerPage }) => (
             Nama Siswa
           </th>
           <th className="px-3 py-3 border-[0.5px] border-gray-600 text-xs font-medium uppercase tracking-wider">
-            JK
+            Jenis Kelamin
           </th>
           <th className="px-3 py-3 border-[0.5px] border-gray-600 text-xs font-medium uppercase tracking-wider">
             Kelas
@@ -168,7 +171,7 @@ const LoadingTable = ({ rowsPerPage }) => (
             <td className="py-4 px-3 text-center">
               <div
                 className="h-4 bg-gray-200 rounded mx-auto"
-                style={{ width: "30px" }}
+                style={{ width: "80px" }}
               ></div>
             </td>
             <td className="py-4 px-3 text-center">
@@ -208,8 +211,350 @@ const DetailSection = ({ title, icon, children }) => (
   </div>
 );
 
-// MODAL DETAIL YANG SUPER LENGKAP SEPERTI INDUK
-const SiswaDetailModal = ({ siswa, onClose, loading }) => {
+const TambahSiswaModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  loading,
+  formData,
+  onFormChange,
+}) => {
+  if (!isOpen) return null;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="Tambah Siswa Baru">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* NIS */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            NIS <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="nis"
+            value={formData.nis}
+            onChange={onFormChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+            placeholder="Masukkan NIS"
+          />
+        </div>
+
+        {/* Nama Siswa */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Nama Siswa <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="nama_siswa"
+            value={formData.nama_siswa}
+            onChange={onFormChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+            placeholder="Masukkan nama lengkap siswa"
+          />
+        </div>
+
+        {/* Jenis Kelamin */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Jenis Kelamin <span className="text-red-500">*</span>
+          </label>
+          <select
+            name="jenis_kelamin"
+            value={formData.jenis_kelamin}
+            onChange={onFormChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+          >
+            <option value="">Pilih Jenis Kelamin</option>
+            <option value="L">Laki-laki</option>
+            <option value="P">Perempuan</option>
+          </select>
+        </div>
+
+        {/* Kelas */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Kelas <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="kelas"
+            value={formData.kelas}
+            onChange={onFormChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+            placeholder="Contoh: X RPL A, XI MEKA B"
+          />
+        </div>
+
+        {/* Alamat */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Alamat
+          </label>
+          <textarea
+            name="alamat"
+            value={formData.alamat}
+            onChange={onFormChange}
+            rows={3}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+            placeholder="Masukkan alamat lengkap"
+          />
+        </div>
+
+        {/* Kontak */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Kontak
+          </label>
+          <input
+            type="text"
+            name="kontak"
+            value={formData.kontak}
+            onChange={onFormChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+            placeholder="Nomor telepon/WhatsApp"
+          />
+        </div>
+
+        {/* Tombol Action */}
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+          >
+            Batal
+          </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center gap-2 disabled:opacity-50"
+          >
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Menyimpan...
+              </>
+            ) : (
+              <>
+                <Plus size={16} />
+                Simpan
+              </>
+            )}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
+};
+
+// MODAL EDIT SISWA
+const EditSiswaModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  loading,
+  formData,
+  onFormChange,
+  siswa,
+}) => {
+  if (!isOpen || !siswa) return null;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData, siswa.id);
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="Edit Data Siswa">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* NIS */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            NIS <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="nis"
+            value={formData.nis}
+            onChange={onFormChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+            placeholder="Masukkan NIS"
+          />
+        </div>
+
+        {/* Nama Siswa */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Nama Siswa <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="nama_siswa"
+            value={formData.nama_siswa}
+            onChange={onFormChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+            placeholder="Masukkan nama lengkap siswa"
+          />
+        </div>
+
+        {/* Jenis Kelamin */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Jenis Kelamin <span className="text-red-500">*</span>
+          </label>
+          <select
+            name="jenis_kelamin"
+            value={formData.jenis_kelamin}
+            onChange={onFormChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+          >
+            <option value="">Pilih Jenis Kelamin</option>
+            <option value="L">Laki-laki</option>
+            <option value="P">Perempuan</option>
+          </select>
+        </div>
+
+        {/* Kelas */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Kelas <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="kelas"
+            value={formData.kelas}
+            onChange={onFormChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+            placeholder="Contoh: X RPL A, XI MEKA B"
+          />
+        </div>
+
+        {/* Alamat */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Alamat
+          </label>
+          <textarea
+            name="alamat"
+            value={formData.alamat}
+            onChange={onFormChange}
+            rows={3}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+            placeholder="Masukkan alamat lengkap"
+          />
+        </div>
+
+        {/* Kontak */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Kontak
+          </label>
+          <input
+            type="text"
+            name="kontak"
+            value={formData.kontak}
+            onChange={onFormChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+            placeholder="Nomor telepon/WhatsApp"
+          />
+        </div>
+
+        {/* Tombol Action */}
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+          >
+            Batal
+          </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center gap-2 disabled:opacity-50"
+          >
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Menyimpan...
+              </>
+            ) : (
+              <>
+                <Save size={16} />
+                Simpan Perubahan
+              </>
+            )}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
+};
+
+// MODAL KONFIRMASI HAPUS
+const DeleteConfirmationModal = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  data,
+  loading,
+}) => (
+  <Modal isOpen={isOpen} onClose={onClose} title="Konfirmasi Hapus">
+    <div className="text-center">
+      <AlertTriangle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        Hapus Data Siswa?
+      </h3>
+      <p className="text-gray-600 mb-6">
+        Apakah Anda yakin ingin menghapus data siswa{" "}
+        <strong>{data?.nama_siswa}</strong> (NIS: {data?.nis})? Tindakan ini
+        tidak dapat dibatalkan.
+      </p>
+      <div className="flex justify-center gap-3">
+        <button
+          onClick={onClose}
+          disabled={loading}
+          className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition disabled:opacity-50"
+        >
+          Batal
+        </button>
+        <button
+          onClick={onConfirm}
+          disabled={loading}
+          className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition flex items-center gap-2 disabled:opacity-50"
+        >
+          {loading ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              Menghapus...
+            </>
+          ) : (
+            <>
+              <Trash2 size={16} />
+              Hapus
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  </Modal>
+);
+
+const SiswaDetailModal = ({ siswa, onClose, loading, onEdit, onDelete }) => {
   if (!siswa && !loading) return null;
 
   // Fungsi untuk format nomor WhatsApp
@@ -298,6 +643,24 @@ const SiswaDetailModal = ({ siswa, onClose, loading }) => {
               </p>
             </div>
           )}
+
+          {/* TOMBOL EDIT & HAPUS */}
+          <div className="flex justify-center gap-4 pt-6 border-t">
+            <button
+              onClick={() => onEdit(siswa)}
+              className="bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 transition flex items-center gap-2 font-medium"
+            >
+              <Pencil size={20} />
+              Edit Data
+            </button>
+            <button
+              onClick={() => onDelete(siswa)}
+              className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition flex items-center gap-2 font-medium"
+            >
+              <Trash2 size={20} />
+              Hapus Data
+            </button>
+          </div>
         </div>
       )}
     </Modal>
@@ -324,6 +687,24 @@ const Siswa = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
 
+  const [isTambahModalOpen, setIsTambahModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    nis: "",
+    nama_siswa: "",
+    jenis_kelamin: "",
+    kelas: "",
+    alamat: "",
+    kontak: "",
+  });
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [siswaToEdit, setSiswaToEdit] = useState(null);
+  const [siswaToDelete, setSiswaToDelete] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [loadingEdit, setLoadingEdit] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
   const showNotif = (type, text) => setNotification({ type, text });
 
   useEffect(() => {
@@ -341,7 +722,7 @@ const Siswa = () => {
         page,
         search,
         rows_per_page: perPage,
-        ...(kelas && { kelas }) // Tambahkan filter kelas ke params
+        ...(kelas && { kelas }), // Tambahkan filter kelas ke params
       };
 
       const response = await axios.get(`${API_URL}/siswa`, { params });
@@ -372,6 +753,45 @@ const Siswa = () => {
     fetchData(currentPage, debouncedTerm, rowsPerPage, selectedKelas);
   }, [currentPage, debouncedTerm, rowsPerPage, selectedKelas, fetchData]);
 
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleTambahSiswa = async (data) => {
+    setLoadingSubmit(true);
+    try {
+      const response = await axios.post(`${API_URL}/siswa`, data);
+
+      if (response.data.success) {
+        showNotif(
+          "success",
+          response.data.message || "Siswa berhasil ditambahkan!"
+        );
+        setIsTambahModalOpen(false);
+        setFormData({
+          nis: "",
+          nama_siswa: "",
+          jenis_kelamin: "",
+          kelas: "",
+          alamat: "",
+          kontak: "",
+        });
+        // Refresh data
+        fetchData(currentPage, debouncedTerm, rowsPerPage, selectedKelas);
+      }
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message || "Gagal menambah siswa";
+      showNotif("error", errorMessage);
+    } finally {
+      setLoadingSubmit(false);
+    }
+  };
+
   const handleViewDetail = async (idsiswa) => {
     setIsModalOpen(true);
     setLoadingDetail(true);
@@ -387,6 +807,82 @@ const Siswa = () => {
       setIsModalOpen(false);
     } finally {
       setLoadingDetail(false);
+    }
+  };
+
+  // Fungsi untuk handle edit
+  const handleEditSiswa = (siswa) => {
+    setSiswaToEdit(siswa);
+    setFormData({
+      nis: siswa.nis,
+      nama_siswa: siswa.nama_siswa,
+      jenis_kelamin: siswa.jenis_kelamin,
+      kelas: siswa.kelas,
+      alamat: siswa.alamat || "",
+      kontak: siswa.kontak || "",
+    });
+    setIsEditModalOpen(true);
+  };
+
+  // Fungsi untuk handle update
+  const handleUpdateSiswa = async (data, id) => {
+    setLoadingEdit(true);
+    try {
+      const response = await axios.put(`${API_URL}/siswa/${id}`, data);
+
+      if (response.data.success) {
+        showNotif(
+          "success",
+          response.data.message || "Data siswa berhasil diupdate!"
+        );
+        setIsEditModalOpen(false);
+        setSiswaToEdit(null);
+        // Refresh data
+        fetchData(currentPage, debouncedTerm, rowsPerPage, selectedKelas);
+        // Tutup modal detail juga
+        setIsModalOpen(false);
+      }
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message || "Gagal mengupdate siswa";
+      showNotif("error", errorMessage);
+    } finally {
+      setLoadingEdit(false);
+    }
+  };
+
+  // Fungsi untuk handle delete
+  const handleDeleteSiswa = (siswa) => {
+    setSiswaToDelete(siswa);
+    setIsDeleteModalOpen(true);
+  };
+
+  // Fungsi untuk konfirmasi hapus
+  const confirmDeleteSiswa = async () => {
+    setLoadingDelete(true);
+    try {
+      const response = await axios.delete(
+        `${API_URL}/siswa/${siswaToDelete.id}`
+      );
+
+      if (response.data.success) {
+        showNotif(
+          "success",
+          response.data.message || "Siswa berhasil dihapus!"
+        );
+        setIsDeleteModalOpen(false);
+        setSiswaToDelete(null);
+        // Refresh data
+        fetchData(currentPage, debouncedTerm, rowsPerPage, selectedKelas);
+        // Tutup modal detail juga
+        setIsModalOpen(false);
+      }
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message || "Gagal menghapus siswa";
+      showNotif("error", errorMessage);
+    } finally {
+      setLoadingDelete(false);
     }
   };
 
@@ -476,7 +972,10 @@ const Siswa = () => {
           </div>
 
           {/* Tombol Tambah - Paling Kanan */}
-          <button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2.5 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 font-medium flex items-center gap-2 shadow-lg">
+          <button
+            onClick={() => setIsTambahModalOpen(true)}
+            className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2.5 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 font-medium flex items-center gap-2 shadow-lg"
+          >
             <Plus size={20} />
             Tambah Siswa
           </button>
@@ -519,7 +1018,7 @@ const Siswa = () => {
                     Nama Siswa
                   </th>
                   <th className="px-3 py-3 border-[0.5px] border-gray-600 text-xs font-medium uppercase tracking-wider">
-                    JK
+                    Jenis Kelamin
                   </th>
                   <th className="px-3 py-3 border-[0.5px] border-gray-600 text-xs font-medium uppercase tracking-wider">
                     Kelas
@@ -548,9 +1047,9 @@ const Siswa = () => {
                     </td>
                     <td className="px-3 py-3 whitespace-nowrap text-center">
                       {s.jenis_kelamin === "L"
-                        ? "L"
+                        ? "Laki-laki"
                         : s.jenis_kelamin === "P"
-                        ? "P"
+                        ? "Perempuan"
                         : s.jenis_kelamin}
                     </td>
                     <td className="px-3 py-3 whitespace-nowrap text-center">
@@ -634,6 +1133,66 @@ const Siswa = () => {
             siswa={selectedSiswa}
             onClose={closeModal}
             loading={loadingDetail}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* MODAL TAMBAH SISWA */}
+      <AnimatePresence>
+        {isTambahModalOpen && (
+          <TambahSiswaModal
+            isOpen={isTambahModalOpen}
+            onClose={() => setIsTambahModalOpen(false)}
+            onSubmit={handleTambahSiswa}
+            loading={loadingSubmit}
+            formData={formData}
+            onFormChange={handleFormChange}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isModalOpen && (
+          <SiswaDetailModal
+            siswa={selectedSiswa}
+            onClose={closeModal}
+            loading={loadingDetail}
+            onEdit={handleEditSiswa}
+            onDelete={handleDeleteSiswa}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* MODAL EDIT SISWA */}
+      <AnimatePresence>
+        {isEditModalOpen && (
+          <EditSiswaModal
+            isOpen={isEditModalOpen}
+            onClose={() => {
+              setIsEditModalOpen(false);
+              setSiswaToEdit(null);
+            }}
+            onSubmit={handleUpdateSiswa}
+            loading={loadingEdit}
+            formData={formData}
+            onFormChange={handleFormChange}
+            siswa={siswaToEdit}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* MODAL KONFIRMASI HAPUS */}
+      <AnimatePresence>
+        {isDeleteModalOpen && (
+          <DeleteConfirmationModal
+            isOpen={isDeleteModalOpen}
+            onClose={() => {
+              setIsDeleteModalOpen(false);
+              setSiswaToDelete(null);
+            }}
+            onConfirm={confirmDeleteSiswa}
+            data={siswaToDelete}
+            loading={loadingDelete}
           />
         )}
       </AnimatePresence>
