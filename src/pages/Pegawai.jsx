@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import Modal from "../components/Modal";
 import {
   Search,
   Info,
@@ -31,47 +32,11 @@ const IconWhatsApp = (props) => (
   </svg>
 );
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api"; // URL API Aplikasi Anak
-const PHOTO_BASE_URL =
-  import.meta.env.VITE_BASE_URL_INDUK || "http://localhost:8001"; // URL Aplikasi Induk untuk foto
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
 // =================================================================
 // KOMPONEN-KOMPONEN HELPER (SUDAH DIGABUNG)
 // =================================================================
-
-const Modal = ({ isOpen, onClose, title, children }) => (
-  <AnimatePresence>
-    {isOpen && (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-        onClick={onClose}
-      >
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0, y: 50 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.9, opacity: 0, y: 50 }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="relative bg-white rounded-2xl shadow-xl w-full max-w-5xl max-h-[90vh] flex flex-col"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="flex items-center justify-between p-5 border-b border-gray-200 sticky top-0 bg-white rounded-t-2xl z-10">
-            <h3 className="text-xl font-bold text-gray-800">{title}</h3>
-            <button
-              onClick={onClose}
-              className="p-1 rounded-full text-gray-400 hover:bg-gray-200 hover:text-gray-700 transition-colors"
-            >
-              <X size={24} />
-            </button>
-          </div>
-          <div className="flex-1 p-6 overflow-y-auto">{children}</div>
-        </motion.div>
-      </motion.div>
-    )}
-  </AnimatePresence>
-);
 
 const Notification = ({ notification, onDismiss }) => {
   const icons = {
@@ -215,10 +180,8 @@ const PegawaiDetailModal = ({
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : (
-        <div className="space-y-6 max-h-[85vh] overflow-y-auto">
-          {/* FOTO DAN IDENTITAS UTAMA */}
+        <div className="space-y-6 max-h-[85vh] p-6 overflow-y-auto">
           <div className="text-center bg-gray-50 p-6 rounded-xl relative">
-            {/* FLOATING ACTION BUTTONS */}
             <div className="absolute top-4 right-4 flex gap-2">
               <button
                 onClick={() => onEdit(pegawai)}
@@ -312,7 +275,7 @@ const TambahPegawaiModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Tambah Pegawai Baru">
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="p-6 space-y-4">
         {/* NIP */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -433,7 +396,7 @@ const EditPegawaiModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Edit Data Pegawai">
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="p-6 pace-y-4">
         {/* NIP */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -543,7 +506,7 @@ const DeleteConfirmationModal = ({
   loading,
 }) => (
   <Modal isOpen={isOpen} onClose={onClose} title="Konfirmasi Hapus">
-    <div className="text-center">
+    <div className="p-6 text-center">
       <AlertTriangle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
       <h3 className="text-lg font-semibold text-gray-900 mb-2">
         Hapus Data Pegawai?

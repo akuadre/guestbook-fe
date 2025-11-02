@@ -167,6 +167,121 @@ const DetailSection = ({ title, icon, children }) => (
   </div>
 );
 
+// MODAL DETAIL YANG SUPER LENGKAP SEPERTI INDUK
+const SiswaDetailModal = ({ siswa, onClose, loading, onEdit, onDelete }) => {
+  if (!siswa && !loading) return null;
+
+  // Fungsi untuk format nomor WhatsApp
+  const formatPhoneNumber = (phone) => {
+    if (!phone) return "";
+    let cleaned = phone.replace(/\D/g, "");
+    if (cleaned.startsWith("0")) {
+      cleaned = "62" + cleaned.substring(1);
+    }
+    return cleaned;
+  };
+
+  return (
+    <Modal isOpen={true} onClose={onClose} title="Detail Siswa">
+      {loading ? (
+        <div className="p-8 text-center flex items-center justify-center flex-grow">
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      ) : (
+        <div className="space-y-6 max-h-[85vh] p-6 overflow-y-auto">
+          {/* FOTO DAN IDENTITAS UTAMA - SIMPLIFIED */}
+          <div className="text-center bg-gray-50 p-6 rounded-xl relative">
+            {/* FLOATING ACTION BUTTONS - POSISI STRATEGIS */}
+            <div className="absolute top-4 right-4 flex gap-2">
+              <button
+                onClick={() => onEdit(siswa)}
+                className="bg-yellow-500 text-white p-2.5 rounded-lg hover:bg-yellow-600 transition shadow-lg"
+                title="Edit Data"
+              >
+                <Edit size={18} />
+              </button>
+              <button
+                onClick={() => onDelete(siswa)}
+                className="bg-red-500 text-white p-2.5 rounded-lg hover:bg-red-600 transition shadow-lg"
+                title="Hapus Data"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+
+            <div className="w-32 h-32 bg-gray-200 rounded-full mx-auto flex items-center justify-center">
+              <User size={48} className="text-gray-400" />
+            </div>
+            <h3 className="text-2xl font-bold mt-4 text-gray-900">
+              {siswa.nama_siswa}
+            </h3>
+            <p className="text-gray-500">NIS: {siswa.nis}</p>
+          </div>
+
+          {/* IDENTITAS SISWA - SESUAI MODEL */}
+          <DetailSection
+            title="📌 Identitas"
+            icon={<User size={18} className="text-blue-500" />}
+          >
+            <DetailRow label="ID" value={siswa.id} />
+            <DetailRow label="NIS" value={siswa.nis} />
+            <DetailRow label="Nama Siswa" value={siswa.nama_siswa} />
+            <DetailRow
+              label="Jenis Kelamin"
+              value={
+                siswa.jenis_kelamin === "L"
+                  ? "Laki-laki"
+                  : siswa.jenis_kelamin === "P"
+                  ? "Perempuan"
+                  : siswa.jenis_kelamin
+              }
+            />
+            <DetailRow label="Kelas" value={siswa.kelas} />
+          </DetailSection>
+
+          {/* KONTAK & ALAMAT - SESUAI MODEL */}
+          <DetailSection
+            title="📞 Kontak & Alamat"
+            icon={<Home size={18} className="text-green-500" />}
+          >
+            <DetailRow label="Alamat" value={siswa.alamat} />
+            <DetailRow label="Kontak" value={siswa.kontak} />
+          </DetailSection>
+
+          {/* TOMBOL WHATSAPP */}
+          {siswa.kontak && (
+            <div className="text-center">
+              <a
+                href={`https://wa.me/${formatPhoneNumber(siswa.kontak)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-all duration-300 font-medium text-lg shadow-lg"
+              >
+                <IconWhatsApp />
+                Hubungi via WhatsApp
+              </a>
+              <p className="text-sm text-gray-500 mt-2">
+                Klik tombol di atas untuk menghubungi {siswa.nama_siswa} via
+                WhatsApp
+              </p>
+            </div>
+          )}
+
+          {/* PESAN JIKA TIDAK ADA KONTAK */}
+          {!siswa.kontak && (
+            <div className="text-center bg-gray-100 p-4 rounded-lg">
+              <IconWhatsApp className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+              <p className="text-gray-500">
+                Nomor kontak tidak tersedia untuk siswa ini.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+    </Modal>
+  );
+};
+
 const TambahSiswaModal = ({
   isOpen,
   onClose,
@@ -184,7 +299,7 @@ const TambahSiswaModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Tambah Siswa Baru">
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="p-6 space-y-4">
         {/* NIS */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -333,7 +448,7 @@ const EditSiswaModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Edit Data Siswa">
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="p-6 space-y-4">
         {/* NIS */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -471,7 +586,7 @@ const DeleteConfirmationModal = ({
   loading,
 }) => (
   <Modal isOpen={isOpen} onClose={onClose} title="Konfirmasi Hapus">
-    <div className="text-center">
+    <div className="p-6 text-center">
       <AlertTriangle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
       <h3 className="text-lg font-semibold text-gray-900 mb-2">
         Hapus Data Siswa?
@@ -510,121 +625,6 @@ const DeleteConfirmationModal = ({
     </div>
   </Modal>
 );
-
-// MODAL DETAIL YANG SUPER LENGKAP SEPERTI INDUK
-const SiswaDetailModal = ({ siswa, onClose, loading, onEdit, onDelete }) => {
-  if (!siswa && !loading) return null;
-
-  // Fungsi untuk format nomor WhatsApp
-  const formatPhoneNumber = (phone) => {
-    if (!phone) return "";
-    let cleaned = phone.replace(/\D/g, "");
-    if (cleaned.startsWith("0")) {
-      cleaned = "62" + cleaned.substring(1);
-    }
-    return cleaned;
-  };
-
-  return (
-    <Modal isOpen={true} onClose={onClose} title="Detail Siswa">
-      {loading ? (
-        <div className="p-8 text-center flex items-center justify-center flex-grow">
-          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      ) : (
-        <div className="space-y-6 max-h-[85vh] overflow-y-auto">
-          {/* FOTO DAN IDENTITAS UTAMA - SIMPLIFIED */}
-          <div className="text-center bg-gray-50 p-6 rounded-xl relative">
-            {/* FLOATING ACTION BUTTONS - POSISI STRATEGIS */}
-            <div className="absolute top-4 right-4 flex gap-2">
-              <button
-                onClick={() => onEdit(siswa)}
-                className="bg-yellow-500 text-white p-2.5 rounded-lg hover:bg-yellow-600 transition shadow-lg"
-                title="Edit Data"
-              >
-                <Edit size={18} />
-              </button>
-              <button
-                onClick={() => onDelete(siswa)}
-                className="bg-red-500 text-white p-2.5 rounded-lg hover:bg-red-600 transition shadow-lg"
-                title="Hapus Data"
-              >
-                <Trash2 size={18} />
-              </button>
-            </div>
-
-            <div className="w-32 h-32 bg-gray-200 rounded-full mx-auto flex items-center justify-center">
-              <User size={48} className="text-gray-400" />
-            </div>
-            <h3 className="text-2xl font-bold mt-4 text-gray-900">
-              {siswa.nama_siswa}
-            </h3>
-            <p className="text-gray-500">NIS: {siswa.nis}</p>
-          </div>
-
-          {/* IDENTITAS SISWA - SESUAI MODEL */}
-          <DetailSection
-            title="📌 Identitas"
-            icon={<User size={18} className="text-blue-500" />}
-          >
-            <DetailRow label="ID" value={siswa.id} />
-            <DetailRow label="NIS" value={siswa.nis} />
-            <DetailRow label="Nama Siswa" value={siswa.nama_siswa} />
-            <DetailRow
-              label="Jenis Kelamin"
-              value={
-                siswa.jenis_kelamin === "L"
-                  ? "Laki-laki"
-                  : siswa.jenis_kelamin === "P"
-                  ? "Perempuan"
-                  : siswa.jenis_kelamin
-              }
-            />
-            <DetailRow label="Kelas" value={siswa.kelas} />
-          </DetailSection>
-
-          {/* KONTAK & ALAMAT - SESUAI MODEL */}
-          <DetailSection
-            title="📞 Kontak & Alamat"
-            icon={<Home size={18} className="text-green-500" />}
-          >
-            <DetailRow label="Alamat" value={siswa.alamat} />
-            <DetailRow label="Kontak" value={siswa.kontak} />
-          </DetailSection>
-
-          {/* TOMBOL WHATSAPP */}
-          {siswa.kontak && (
-            <div className="text-center">
-              <a
-                href={`https://wa.me/${formatPhoneNumber(siswa.kontak)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-all duration-300 font-medium text-lg shadow-lg"
-              >
-                <IconWhatsApp />
-                Hubungi via WhatsApp
-              </a>
-              <p className="text-sm text-gray-500 mt-2">
-                Klik tombol di atas untuk menghubungi {siswa.nama_siswa} via
-                WhatsApp
-              </p>
-            </div>
-          )}
-
-          {/* PESAN JIKA TIDAK ADA KONTAK */}
-          {!siswa.kontak && (
-            <div className="text-center bg-gray-100 p-4 rounded-lg">
-              <IconWhatsApp className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-              <p className="text-gray-500">
-                Nomor kontak tidak tersedia untuk siswa ini.
-              </p>
-            </div>
-          )}
-        </div>
-      )}
-    </Modal>
-  );
-};
 
 // =================================================================
 // KOMPONEN UTAMA HALAMAN SISWA
