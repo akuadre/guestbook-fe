@@ -18,6 +18,8 @@ import {
   CheckCircle,
   AlertTriangle,
   XCircle,
+  Filter,
+  Plus
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -316,6 +318,7 @@ const Siswa = () => {
   const [pagination, setPagination] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedTerm, setDebouncedTerm] = useState("");
+  const [selectedKelas, setSelectedKelas] = useState("");
 
   const [selectedSiswa, setSelectedSiswa] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -331,21 +334,19 @@ const Siswa = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const fetchData = useCallback(async (page, search, perPage) => {
+  const fetchData = useCallback(async (page, search, perPage, kelas) => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API_URL}/siswa`, {
-        params: {
-          page,
-          search,
-          rows_per_page: perPage,
-        },
-      });
+      const params = {
+        page,
+        search,
+        rows_per_page: perPage,
+        ...(kelas && { kelas }) // Tambahkan filter kelas ke params
+      };
 
-      // Sesuaikan dengan response aktual dari backend
-      // Jika backend mengembalikan pagination object langsung
-      if (response.data.data) {
-        // Jika response sudah memiliki struktur { data: [], current_page, etc }
+      const response = await axios.get(`${API_URL}/siswa`, { params });
+
+      if (response.data.success) {
         setSiswa(response.data.data);
         setPagination({
           current_page: response.data.current_page,
@@ -355,8 +356,7 @@ const Siswa = () => {
           to: response.data.to,
         });
       } else {
-        // Jika backend mengembalikan pagination object langsung
-        setSiswa(response.data.data || response.data);
+        setSiswa(response.data.data || []);
         setPagination(response.data);
       }
     } catch (err) {
@@ -367,9 +367,10 @@ const Siswa = () => {
       setLoading(false);
     }
   }, []);
+
   useEffect(() => {
-    fetchData(currentPage, debouncedTerm, rowsPerPage);
-  }, [currentPage, debouncedTerm, rowsPerPage, fetchData]);
+    fetchData(currentPage, debouncedTerm, rowsPerPage, selectedKelas);
+  }, [currentPage, debouncedTerm, rowsPerPage, selectedKelas, fetchData]);
 
   const handleViewDetail = async (idsiswa) => {
     setIsModalOpen(true);
@@ -392,6 +393,17 @@ const Siswa = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedSiswa(null);
+  };
+
+  const handleKelasChange = (e) => {
+    setSelectedKelas(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const clearFilters = () => {
+    setSelectedKelas("");
+    setSearchTerm("");
+    setCurrentPage(1);
   };
 
   const getRowNumber = (index) => {
@@ -421,18 +433,74 @@ const Siswa = () => {
           </p>
         </div>
 
+        {/* FILTER SECTION - SEPERTI BUKU TAMU */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-          <div className="relative w-full md:w-80">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Cari nama, NIS, atau kelas siswa ..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-11 pr-4 py-2.5 border border-gray-300 rounded-lg w-full bg-gray-50 focus:ring-2 focus:ring-sky-500 outline-none transition"
-            />
+          <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+            {/* Filter Kelas */}
+            <div className="relative w-full md:w-64">
+              <Filter className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <select
+                value={selectedKelas}
+                onChange={handleKelasChange}
+                className="pl-11 pr-4 py-2.5 border border-gray-300 rounded-lg w-full bg-gray-50 focus:ring-2 focus:ring-sky-500 outline-none transition appearance-none"
+              >
+                <option value="">Semua Kelas</option>
+                <option value="X">Kelas X (10)</option>
+                <option value="XI">Kelas XI (11)</option>
+                <option value="XII">Kelas XII (12)</option>
+              </select>
+            </div>
+
+            {/* Search Input */}
+            <div className="relative w-full md:w-80">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Cari nama, NIS, atau kelas siswa ..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-11 pr-4 py-2.5 border border-gray-300 rounded-lg w-full bg-gray-50 focus:ring-2 focus:ring-sky-500 outline-none transition"
+              />
+            </div>
+
+            {/* Clear Filters Button */}
+            {(selectedKelas || searchTerm) && (
+              <button
+                onClick={clearFilters}
+                className="px-4 py-2.5 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition flex items-center gap-2 w-full md:w-auto justify-center"
+              >
+                <X size={16} />
+                Hapus Filter
+              </button>
+            )}
           </div>
+
+          {/* Tombol Tambah - Paling Kanan */}
+          <button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2.5 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 font-medium flex items-center gap-2 shadow-lg">
+            <Plus size={20} />
+            Tambah Siswa
+          </button>
         </div>
+
+        {/* Active Filters Info */}
+        {(selectedKelas || searchTerm) && (
+          <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="flex items-center gap-2 text-sm text-blue-800">
+              <Filter size={16} />
+              <span>Filter Aktif:</span>
+              {selectedKelas && (
+                <span className="bg-blue-100 px-2 py-1 rounded text-xs">
+                  Kelas: {selectedKelas}
+                </span>
+              )}
+              {searchTerm && (
+                <span className="bg-blue-100 px-2 py-1 rounded text-xs">
+                  Pencarian: "{searchTerm}"
+                </span>
+              )}
+            </div>
+          </div>
+        )}
 
         {loading ? (
           <LoadingTable rowsPerPage={rowsPerPage} />
@@ -500,9 +568,9 @@ const Siswa = () => {
                 ))}
                 {!loading && siswa.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="text-center py-6 text-gray-500">
-                      {debouncedTerm
-                        ? "Tidak ada data yang cocok dengan pencarian."
+                    <td colSpan={6} className="text-center py-6 text-gray-500">
+                      {debouncedTerm || selectedKelas
+                        ? "Tidak ada data yang cocok dengan filter yang dipilih."
                         : "Tidak ada data."}
                     </td>
                   </tr>
