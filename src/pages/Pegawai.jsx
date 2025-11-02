@@ -14,7 +14,7 @@ import {
   Trash2,
   Edit,
   Save,
-  Filter,
+  ListFilterPlus,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -808,7 +808,7 @@ const Pegawai = () => {
           <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
             {/* Filter Jabatan */}
             <div className="relative w-full md:w-64">
-              <Filter className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <ListFilterPlus className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <select
                 value={selectedJabatan}
                 onChange={(e) => {
@@ -868,7 +868,7 @@ const Pegawai = () => {
         {(selectedJabatan || searchTerm) && (
           <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
             <div className="flex items-center gap-2 text-sm text-blue-800">
-              <Filter size={16} />
+              <ListFilterPlus size={16} />
               <span>Filter Aktif:</span>
               {selectedJabatan && (
                 <span className="bg-blue-100 px-2 py-1 rounded text-xs">
