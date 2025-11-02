@@ -1,28 +1,20 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import Modal from "../components/Modal";
 import {
   Search,
   Info,
   X,
-  ChevronLeft,
-  ChevronRight,
   User,
-  School,
-  BookUser,
   Home,
-  Briefcase,
-  Pencil,
-  HeartHandshake,
-  Banknote,
-  ShieldCheck,
   CheckCircle,
   AlertTriangle,
   XCircle,
-  Filter,
   Plus,
   Trash2,
   Edit,
   Save,
+  ListFilterPlus,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -43,44 +35,8 @@ const IconWhatsApp = (props) => (
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
 // =================================================================
-// KOMPONEN-KOMPONEN HELPER (MODAL & NOTIFICATION)
+// KOMPONEN-KOMPONEN HELPER (NOTIFICATION)
 // =================================================================
-
-const Modal = ({ isOpen, onClose, title, children }) => {
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-          onClick={onClose}
-        >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0, y: 50 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0, y: 50 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="relative bg-white rounded-2xl shadow-xl w-full max-w-6xl max-h-[90vh] flex flex-col"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between p-5 border-b border-gray-200 sticky top-0 bg-white rounded-t-2xl z-10">
-              <h3 className="text-xl font-bold text-gray-800">{title}</h3>
-              <button
-                onClick={onClose}
-                className="p-1 rounded-full text-gray-400 hover:bg-gray-200 hover:text-gray-700 transition-colors"
-              >
-                <X size={24} />
-              </button>
-            </div>
-            <div className="flex-1 p-6 overflow-y-auto">{children}</div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-};
 
 const Notification = ({ notification, onDismiss }) => {
   const icons = {
@@ -111,7 +67,7 @@ const Notification = ({ notification, onDismiss }) => {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.9 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
-          className="fixed top-5 left-1/2 -translate-x-1/2 z-50"
+          className="fixed top-5 left-1/2 -translate-x-1/2 z-[9999]"
         >
           <div
             className={`flex items-center gap-4 text-white p-4 rounded-xl shadow-2xl ${
@@ -298,12 +254,13 @@ const TambahSiswaModal = ({
         {/* Alamat */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Alamat
+            Alamat <span className="text-red-500">*</span>
           </label>
           <textarea
             name="alamat"
             value={formData.alamat}
             onChange={onFormChange}
+            required
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
             placeholder="Masukkan alamat lengkap"
@@ -554,6 +511,7 @@ const DeleteConfirmationModal = ({
   </Modal>
 );
 
+// MODAL DETAIL YANG SUPER LENGKAP SEPERTI INDUK
 const SiswaDetailModal = ({ siswa, onClose, loading, onEdit, onDelete }) => {
   if (!siswa && !loading) return null;
 
@@ -576,7 +534,25 @@ const SiswaDetailModal = ({ siswa, onClose, loading, onEdit, onDelete }) => {
       ) : (
         <div className="space-y-6 max-h-[85vh] overflow-y-auto">
           {/* FOTO DAN IDENTITAS UTAMA - SIMPLIFIED */}
-          <div className="text-center bg-gray-50 p-6 rounded-xl">
+          <div className="text-center bg-gray-50 p-6 rounded-xl relative">
+            {/* FLOATING ACTION BUTTONS - POSISI STRATEGIS */}
+            <div className="absolute top-4 right-4 flex gap-2">
+              <button
+                onClick={() => onEdit(siswa)}
+                className="bg-yellow-500 text-white p-2.5 rounded-lg hover:bg-yellow-600 transition shadow-lg"
+                title="Edit Data"
+              >
+                <Edit size={18} />
+              </button>
+              <button
+                onClick={() => onDelete(siswa)}
+                className="bg-red-500 text-white p-2.5 rounded-lg hover:bg-red-600 transition shadow-lg"
+                title="Hapus Data"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+
             <div className="w-32 h-32 bg-gray-200 rounded-full mx-auto flex items-center justify-center">
               <User size={48} className="text-gray-400" />
             </div>
@@ -591,6 +567,7 @@ const SiswaDetailModal = ({ siswa, onClose, loading, onEdit, onDelete }) => {
             title="📌 Identitas"
             icon={<User size={18} className="text-blue-500" />}
           >
+            <DetailRow label="ID" value={siswa.id} />
             <DetailRow label="NIS" value={siswa.nis} />
             <DetailRow label="Nama Siswa" value={siswa.nama_siswa} />
             <DetailRow
@@ -643,24 +620,6 @@ const SiswaDetailModal = ({ siswa, onClose, loading, onEdit, onDelete }) => {
               </p>
             </div>
           )}
-
-          {/* TOMBOL EDIT & HAPUS */}
-          <div className="flex justify-center gap-4 pt-6 border-t">
-            <button
-              onClick={() => onEdit(siswa)}
-              className="bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 transition flex items-center gap-2 font-medium"
-            >
-              <Pencil size={20} />
-              Edit Data
-            </button>
-            <button
-              onClick={() => onDelete(siswa)}
-              className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition flex items-center gap-2 font-medium"
-            >
-              <Trash2 size={20} />
-              Hapus Data
-            </button>
-          </div>
         </div>
       )}
     </Modal>
@@ -697,6 +656,18 @@ const Siswa = () => {
     kontak: "",
   });
   const [loadingSubmit, setLoadingSubmit] = useState(false);
+
+  // TAMBAHKAN DI SINI: Fungsi reset form terpusat
+  const resetForm = () => {
+    setFormData({
+      nis: "",
+      nama_siswa: "",
+      jenis_kelamin: "",
+      kelas: "",
+      alamat: "",
+      kontak: "",
+    });
+  };
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [siswaToEdit, setSiswaToEdit] = useState(null);
@@ -761,6 +732,19 @@ const Siswa = () => {
     }));
   };
 
+  // Fungsi untuk handle close modal tambah
+  const handleCloseTambahModal = () => {
+    setIsTambahModalOpen(false);
+    resetForm();
+  };
+
+  // Fungsi untuk handle close modal edit
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setSiswaToEdit(null);
+    resetForm();
+  };
+
   const handleTambahSiswa = async (data) => {
     setLoadingSubmit(true);
     try {
@@ -772,21 +756,22 @@ const Siswa = () => {
           response.data.message || "Siswa berhasil ditambahkan!"
         );
         setIsTambahModalOpen(false);
-        setFormData({
-          nis: "",
-          nama_siswa: "",
-          jenis_kelamin: "",
-          kelas: "",
-          alamat: "",
-          kontak: "",
-        });
+        resetForm();
         // Refresh data
         fetchData(currentPage, debouncedTerm, rowsPerPage, selectedKelas);
       }
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || "Gagal menambah siswa";
-      showNotif("error", errorMessage);
+      if (err.response?.status === 422 && err.response?.data?.errors) {
+        const errors = err.response.data.errors;
+        // Ambil error pertama untuk ditampilkan
+        const firstError = Object.values(errors)[0][0];
+        showNotif("error", firstError);
+      } else {
+        // HANDLING ERROR LAINNYA
+        const errorMessage =
+          err.response?.data?.message || "Gagal menambah siswa";
+        showNotif("error", errorMessage);
+      }
     } finally {
       setLoadingSubmit(false);
     }
@@ -837,6 +822,7 @@ const Siswa = () => {
         );
         setIsEditModalOpen(false);
         setSiswaToEdit(null);
+        resetForm();
         // Refresh data
         fetchData(currentPage, debouncedTerm, rowsPerPage, selectedKelas);
         // Tutup modal detail juga
@@ -934,7 +920,7 @@ const Siswa = () => {
           <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
             {/* Filter Kelas */}
             <div className="relative w-full md:w-64">
-              <Filter className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <ListFilterPlus className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <select
                 value={selectedKelas}
                 onChange={handleKelasChange}
@@ -985,7 +971,7 @@ const Siswa = () => {
         {(selectedKelas || searchTerm) && (
           <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
             <div className="flex items-center gap-2 text-sm text-blue-800">
-              <Filter size={16} />
+              <ListFilterPlus size={16} />
               <span>Filter Aktif:</span>
               {selectedKelas && (
                 <span className="bg-blue-100 px-2 py-1 rounded text-xs">
@@ -1142,7 +1128,7 @@ const Siswa = () => {
         {isTambahModalOpen && (
           <TambahSiswaModal
             isOpen={isTambahModalOpen}
-            onClose={() => setIsTambahModalOpen(false)}
+            onClose={handleCloseTambahModal}
             onSubmit={handleTambahSiswa}
             loading={loadingSubmit}
             formData={formData}
@@ -1168,10 +1154,7 @@ const Siswa = () => {
         {isEditModalOpen && (
           <EditSiswaModal
             isOpen={isEditModalOpen}
-            onClose={() => {
-              setIsEditModalOpen(false);
-              setSiswaToEdit(null);
-            }}
+            onClose={handleCloseEditModal}
             onSubmit={handleUpdateSiswa}
             loading={loadingEdit}
             formData={formData}
