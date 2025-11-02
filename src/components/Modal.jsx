@@ -18,7 +18,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 50 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col"
+            className="relative bg-white rounded-2xl shadow-xl w-full max-w-5xl max-h-[90vh] flex flex-col"
             onClick={(e) => e.stopPropagation()} // Mencegah modal tertutup saat klik di dalam panel
           >
             {/* Modal Header */}
