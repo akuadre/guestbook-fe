@@ -54,11 +54,34 @@ const getTodayString = () => {
   return today.toISOString().split("T")[0];
 };
 
-const generateChartData = (filterType, options) => {
+const fetchChartData = async (filterType, options) => {
+  try {
+    const params = {
+      filter_type: filterType,
+      ...options,
+    };
+
+    const response = await axios.get(`${API_URL}/bukutamu/grafik`, { params });
+
+    if (response.data.success) {
+      return response.data.data;
+    } else {
+      throw new Error("Gagal mengambil data grafik");
+    }
+  } catch (err) {
+    console.error("Error fetching chart data:", err);
+    // Fallback ke data dummy jika API error
+    return generateFallbackChartData(filterType, options);
+  }
+};
+
+// Fallback data jika API error
+const generateFallbackChartData = (filterType, options) => {
   let labels = [];
   let data = [];
   const random = (min, max) =>
     Math.floor(Math.random() * (max - min + 1)) + min;
+
   switch (filterType) {
     case "harian":
       labels = [
@@ -111,6 +134,7 @@ const generateChartData = (filterType, options) => {
     default:
       break;
   }
+
   return {
     labels,
     datasets: [
@@ -263,7 +287,7 @@ const Dashboard = () => {
       </div>
     );
   };
-  
+
   useEffect(() => {
     setLoading(true);
     fetchDashboard();
@@ -271,13 +295,19 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!loading) {
-      const options = {
-        harian: { date: selectedDate },
-        mingguan: selectedWeek,
-        bulanan: selectedMonth,
-        tahunan: { year: selectedYear },
+      const loadChartData = async () => {
+        const options = {
+          harian: { date: selectedDate },
+          mingguan: selectedWeek,
+          bulanan: selectedMonth,
+          tahunan: { year: selectedYear },
+        };
+
+        const chartData = await fetchChartData(filterType, options[filterType]);
+        setChartData(chartData);
       };
-      setChartData(generateChartData(filterType, options[filterType]));
+
+      loadChartData();
     }
   }, [
     filterType,
@@ -472,23 +502,41 @@ const Dashboard = () => {
                 initial="hidden"
                 animate="visible"
               >
-                {recentGuests.map((guest) => (
-                  <motion.tr
-                    key={guest.id}
-                    variants={itemVariants}
-                    className="border-b border-gray-100 last:border-b-0"
-                  >
-                    <td className="py-3 px-3 font-medium text-gray-800">
-                      {guest.nama}
-                    </td>
-                    <td className="py-3 px-3 text-gray-600">
-                      {guest.keperluan}
-                    </td>
-                    <td className="py-3 px-3 text-gray-500 text-right">
-                      {guest.tanggal}
+                {recentGuests.length > 0 ? (
+                  recentGuests.map((guest) => (
+                    <motion.tr
+                      key={guest.id}
+                      variants={itemVariants}
+                      className="border-b border-gray-100 last:border-b-0"
+                    >
+                      <td className="py-3 px-3 font-medium text-gray-800">
+                        {guest.nama}
+                        {guest.role === "ortu" && (
+                          <span className="block text-xs text-gray-500">
+                            Orang Tua Siswa
+                          </span>
+                        )}
+                        {guest.role === "umum" && guest.instansi && (
+                          <span className="block text-xs text-gray-500">
+                            {guest.instansi}
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-3 px-3 text-gray-600">
+                        {guest.keperluan}
+                      </td>
+                      <td className="py-3 px-3 text-gray-500 text-right">
+                        {guest.tanggal}
+                      </td>
+                    </motion.tr>
+                  ))
+                ) : (
+                  <motion.tr variants={itemVariants}>
+                    <td colSpan={3} className="py-4 text-center text-gray-500">
+                      Tidak ada data tamu
                     </td>
                   </motion.tr>
-                ))}
+                )}
               </motion.tbody>
             </table>
           </div>
