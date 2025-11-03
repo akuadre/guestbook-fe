@@ -69,25 +69,79 @@ const Sidebar = () => {
   return (
     // [!] Background Gradient Mewah dan penambahan border kanan lembut
     <aside className="fixed top-0 left-0 w-72 h-full bg-gradient-to-br from-[#101831] to-[#1a254a] flex flex-col z-40 border-r border-white/10">
-      {/* App Header */}
-      <div className="flex items-center gap-4 px-6 py-5 border-b border-white/10">
-        <motion.img
-          src={logoIcon}
-          alt="App Logo"
-          className="h-10 w-10"
-          animate={{ rotate: [0, 15, -10, 5, 0] }}
-          transition={{ duration: 1, ease: "easeInOut" }}
-        />
-        <div>
-          <Link
-            to="/dashboard"
-            className="text-xl font-bold text-white tracking-wider"
+      {/* App Header - Glassmorphism */}
+      {/* <div className="relative px-6 py-5 border-b border-white/10 bg-gradient-to-r from-sky-500/10 to-purple-500/10 backdrop-blur-lg">
+        <div className="absolute inset-0 bg-gradient-to-r from-sky-400/5 to-purple-400/5 blur-sm"></div>
+
+        <div className="relative flex items-center gap-4 z-10">
+          <motion.div
+            className="relative"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
-            GuestBook
-          </Link>
-          <p className="text-xs text-sky-300/70">Admin Panel</p>
+            <img
+              src={logoIcon}
+              alt="App Logo"
+              className="h-12 w-12 rounded-2xl border-2 border-white/20 shadow-lg"
+            />
+            <div className="absolute inset-0 rounded-2xl border-2 border-sky-400/30 animate-ping"></div>
+          </motion.div>
+
+          <div>
+            <Link
+              to="/dashboard"
+              className="text-2xl font-bold bg-gradient-to-r from-white to-sky-200 bg-clip-text text-transparent"
+            >
+              GuestBook
+            </Link>
+            <p className="text-xs text-sky-300/80 font-medium mt-1">
+              Admin Dashboard
+            </p>
+          </div>
         </div>
-      </div>
+      </div> */}
+
+      {/* App Header - Modern Minimalist */}
+      <motion.div
+        className="px-6 py-6 border-b border-white/5 bg-black/20"
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="flex items-center gap-4">
+          <motion.div
+            className="relative"
+            whileHover={{
+              scale: 1.05,
+              rotate: [0, -5, 5, 0],
+            }}
+          >
+            <div className="absolute -inset-1 bg-gradient-to-r from-sky-400 to-purple-400 rounded-lg blur opacity-30"></div>
+            <img
+              src={logoIcon}
+              alt="App Logo"
+              className="relative h-12 w-12 rounded-lg border border-white/10"
+            />
+          </motion.div>
+
+          <div>
+            <Link
+              to="/dashboard"
+              className="text-2xl font-bold text-white block leading-tight"
+            >
+              GuestBook
+            </Link>
+            <motion.p
+              className="text-xs text-gray-400"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              Management System
+            </motion.p>
+          </div>
+        </div>
+      </motion.div>
 
       {/* Navigation Menu */}
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
