@@ -236,9 +236,14 @@ const BukuTamuDetailModal = ({ tamu, onClose, loading, onDelete }) => {
               <div className="flex justify-center">
                 <img
                   src={`${IMG_URL}/${tamu.foto_tamu}`}
-                  // alt={`Foto ${tamu.nama}`}
-                  alt="Foto Tamu"
+                  alt={`Foto ${tamu.nama}`}
+                  // alt="Foto Tamu"
                   className="w-64 h-48 object-cover rounded-xl shadow-md border-4 border-white"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src =
+                      "https://placehold.co/128x160/e2e8f0/64748b?text=No+Image";
+                  }}
                 />
               </div>
             ) : (
@@ -402,8 +407,6 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, data }) => (
 
 const BukuTamu = () => {
   const [bukuTamu, setBukuTamu] = useState([]);
-  const [tahunAjaranOptions, setTahunAjaranOptions] = useState([]);
-  const [selectedTahunAjaran, setSelectedTahunAjaran] = useState("");
   const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState(null);
 
@@ -419,22 +422,10 @@ const BukuTamu = () => {
   const [tamuToDelete, setTamuToDelete] = useState(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
 
-  const showNotif = (type, text) => setNotification({ type, text });
+  const [roleFilter, setRoleFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState("");
 
-  // Load tahun ajaran options
-  useEffect(() => {
-    const loadTahunAjaranOptions = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/tahun-ajaran-options`);
-        if (response.data.success) {
-          setTahunAjaranOptions(response.data.data);
-        }
-      } catch (error) {
-        console.error("Gagal memuat opsi tahun ajaran:", error);
-      }
-    };
-    loadTahunAjaranOptions();
-  }, []);
+  const showNotif = (type, text) => setNotification({ type, text });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -444,14 +435,15 @@ const BukuTamu = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const fetchData = useCallback(async (page, search, perPage, tahunAjaran) => {
+  const fetchData = useCallback(async (page, search, perPage, role, date) => {
     setLoading(true);
     try {
       const params = {
         page,
         search,
         rows_per_page: perPage,
-        ...(tahunAjaran && { tahun_ajaran: tahunAjaran }),
+        role: role || undefined,
+        date: date || undefined,
       };
 
       const response = await axios.get(`${API_URL}/bukutamu`, { params });
@@ -472,8 +464,15 @@ const BukuTamu = () => {
   }, []);
 
   useEffect(() => {
-    fetchData(currentPage, debouncedTerm, rowsPerPage, selectedTahunAjaran);
-  }, [currentPage, debouncedTerm, rowsPerPage, selectedTahunAjaran, fetchData]);
+    fetchData(currentPage, debouncedTerm, rowsPerPage, roleFilter, dateFilter);
+  }, [
+    currentPage,
+    debouncedTerm,
+    rowsPerPage,
+    roleFilter,
+    dateFilter,
+    fetchData,
+  ]);
 
   const handleViewDetail = async (id) => {
     setIsDetailModalOpen(true);
@@ -497,7 +496,7 @@ const BukuTamu = () => {
     try {
       await axios.delete(`${API_URL}/bukutamu/${id}`);
       showNotif("success", "Data buku tamu berhasil dihapus.");
-      fetchData(currentPage, debouncedTerm, rowsPerPage, selectedTahunAjaran);
+      fetchData(currentPage, debouncedTerm, rowsPerPage);
       setIsDetailModalOpen(false); // Tutup modal detail setelah hapus
     } catch (err) {
       showNotif("error", "Gagal menghapus data buku tamu.");
@@ -538,20 +537,37 @@ const BukuTamu = () => {
     return new Date(dateString).toLocaleDateString("id-ID", options);
   };
 
+  const formatDateForDisplay = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
+
   const getRowNumber = (index) => {
     if (!pagination) return index + 1;
     return pagination.from + index;
   };
 
-  const handleTahunAjaranChange = (e) => {
-    setSelectedTahunAjaran(e.target.value);
+  const clearFilters = () => {
+    setSearchTerm("");
+    setRoleFilter("");
+    setDateFilter("");
     setCurrentPage(1);
   };
 
-  const clearFilters = () => {
-    setSelectedTahunAjaran("");
-    setSearchTerm("");
-    setCurrentPage(1);
+  const getRoleLabel = (role) => {
+    switch (role) {
+      case "ortu":
+        return "Orang Tua";
+      case "umum":
+        return "Tamu Umum";
+      default:
+        return role;
+    }
   };
 
   return (
@@ -579,25 +595,39 @@ const BukuTamu = () => {
         {/* FILTER SECTION */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
           <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-            {/* Filter Tahun Ajaran */}
+            {/* Filter Role */}
             <div className="relative w-full md:w-64">
               <ListFilterPlus className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <select
-                value={selectedTahunAjaran}
-                onChange={handleTahunAjaranChange}
+                value={roleFilter}
+                onChange={(e) => {
+                  setRoleFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="pl-11 pr-4 py-2.5 border border-gray-300 rounded-lg w-full bg-gray-50 focus:ring-2 focus:ring-sky-500 outline-none transition appearance-none"
               >
-                <option value="">Semua Tahun Ajaran</option>
-                {tahunAjaranOptions.map((tahun) => (
-                  <option key={tahun.id} value={tahun.id}>
-                    {tahun.tahun_ajaran}
-                  </option>
-                ))}
+                <option value="">Semua Role</option>
+                <option value="ortu">Orang Tua</option>
+                <option value="umum">Tamu Umum</option>
               </select>
             </div>
 
+            {/* Filter Tanggal - TAMBAHAN BARU */}
+            <div className="relative w-full md:w-64">
+              <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="date"
+                value={dateFilter}
+                onChange={(e) => {
+                  setDateFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="pl-11 pr-4 py-2.5 border border-gray-300 rounded-lg w-full bg-gray-50 focus:ring-2 focus:ring-sky-500 outline-none transition"
+              />
+            </div>
+
             {/* Search Input */}
-            <div className="relative w-full md:w-80">
+            <div className="relative w-full md:w-90">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
@@ -609,7 +639,7 @@ const BukuTamu = () => {
             </div>
 
             {/* Clear Filters Button */}
-            {(selectedTahunAjaran || searchTerm) && (
+            {(searchTerm || roleFilter || dateFilter) && (
               <button
                 onClick={clearFilters}
                 className="px-4 py-2.5 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition flex items-center gap-2 w-full md:w-auto justify-center"
@@ -621,23 +651,24 @@ const BukuTamu = () => {
           </div>
         </div>
 
-        {/* Active Filters Info */}
-        {(selectedTahunAjaran || searchTerm) && (
+        {/* ACTIVE FILTERS INFO */}
+        {(roleFilter || searchTerm || dateFilter) && (
           <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
             <div className="flex items-center gap-2 text-sm text-blue-800">
               <ListFilterPlus size={16} />
               <span>Filter Aktif:</span>
-              {selectedTahunAjaran && (
-                <span className="bg-blue-100 px-2 py-1 rounded text-xs">
-                  Tahun Ajaran:{" "}
-                  {
-                    tahunAjaranOptions.find((t) => t.id == selectedTahunAjaran)
-                      ?.tahun_ajaran
-                  }
+              {roleFilter && (
+                <span className="bg-blue-100 px-2 py-1 rounded text-xs font-medium">
+                  Role: {getRoleLabel(roleFilter)}
+                </span>
+              )}
+              {dateFilter && (
+                <span className="bg-blue-100 px-2 py-1 rounded text-xs font-medium">
+                  Tanggal: {formatDateForDisplay(dateFilter)}
                 </span>
               )}
               {searchTerm && (
-                <span className="bg-blue-100 px-2 py-1 rounded text-xs">
+                <span className="bg-blue-100 px-2 py-1 rounded text-xs font-medium">
                   Pencarian: "{searchTerm}"
                 </span>
               )}
@@ -690,7 +721,15 @@ const BukuTamu = () => {
                       </button>
                     </td>
                     <td className="px-3 py-3 whitespace-nowrap text-center">
-                      {tamu.role === "ortu" ? "Orang Tua" : "Tamu Umum"}
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          tamu.role === "ortu"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-green-100 text-green-800"
+                        }`}
+                      >
+                        {tamu.role === "ortu" ? "👨‍👩‍👧‍👦 Orang Tua" : "👥 Tamu Umum"}
+                      </span>
                     </td>
                     <td className="px-3 py-3 whitespace-nowrap text-left">
                       {tamu.pegawai?.nama_pegawai
@@ -724,7 +763,7 @@ const BukuTamu = () => {
                 {!loading && bukuTamu.length === 0 && (
                   <tr>
                     <td colSpan={7} className="text-center py-6 text-gray-500">
-                      {debouncedTerm || selectedTahunAjaran
+                      {debouncedTerm
                         ? "Tidak ada data yang cocok dengan filter yang dipilih."
                         : "Tidak ada data buku tamu."}
                     </td>
