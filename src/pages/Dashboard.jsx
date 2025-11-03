@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   Users,
@@ -40,11 +40,24 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 // --- Animation Variants for Framer Motion ---
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+  visible: { 
+    opacity: 1, 
+    transition: { 
+      staggerChildren: 0.05,
+      delayChildren: 0.1 
+    } 
+  },
 };
 const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { duration: 0.5 } },
+  hidden: { y: 10, opacity: 0 },
+  visible: { 
+    y: 0, 
+    opacity: 1, 
+    transition: { 
+      duration: 0.3,
+      ease: "easeOut"
+    } 
+  },
 };
 
 // Helper functions for date and chart data
@@ -157,7 +170,8 @@ const generateFallbackChartData = (filterType, options) => {
 
 // Komponen Kartu Statistik
 const StatCard = ({ title, value, icon, color, link }) => (
-  <div
+  <motion.div
+    variants={itemVariants}
     className={`bg-gradient-to-br ${color} rounded-xl shadow-lg text-white overflow-hidden transform hover:-translate-y-1 transition-transform duration-300`}
   >
     <div className="p-5">
@@ -177,12 +191,45 @@ const StatCard = ({ title, value, icon, color, link }) => (
         Lihat Detail <ArrowRight className="w-4 h-4 ml-1.5" />
       </span>
     </Link>
+  </motion.div>
+);
+
+// Komponen Skeleton untuk Kartu dengan shimmer effect
+const StatCardSkeleton = () => (
+  <div className="bg-gray-200 rounded-xl shadow-lg h-36 relative overflow-hidden">
+    <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer"></div>
   </div>
 );
 
-// Komponen Skeleton untuk Kartu
-const StatCardSkeleton = () => (
-  <div className="bg-gray-200 rounded-xl shadow-lg h-36 animate-pulse"></div>
+// Komponen Skeleton untuk Tabel
+const TableSkeleton = () => (
+  <div className="space-y-3">
+    {Array.from({ length: 5 }).map((_, index) => (
+      <div
+        key={index}
+        className="flex justify-between items-center py-3 border-b border-gray-100 last:border-b-0"
+      >
+        <div className="flex-1 space-y-2">
+          <div className="h-4 bg-gray-200 rounded relative overflow-hidden">
+            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer"></div>
+          </div>
+          <div className="h-3 bg-gray-200 rounded w-3/4 relative overflow-hidden">
+            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer"></div>
+          </div>
+        </div>
+        <div className="flex-1 ml-4 space-y-2">
+          <div className="h-4 bg-gray-200 rounded relative overflow-hidden">
+            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer"></div>
+          </div>
+        </div>
+        <div className="w-1/5 ml-4">
+          <div className="h-4 bg-gray-200 rounded float-right w-3/4 relative overflow-hidden">
+            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer"></div>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
 );
 
 const Dashboard = () => {
@@ -190,7 +237,7 @@ const Dashboard = () => {
   const [chartData, setChartData] = useState({});
   const [recentGuests, setRecentGuests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [notification, setNotification] = useState(null); // TAMBAH STATE INI
+  const [notification, setNotification] = useState(null);
 
   // State untuk filter
   const [filterType, setFilterType] = useState("harian");
@@ -366,6 +413,21 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8">
+      {/* Tambahkan custom CSS untuk animasi shimmer di global style */}
+      <style jsx>{`
+        @keyframes shimmer {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(100%);
+          }
+        }
+        .animate-shimmer {
+          animation: shimmer 2s infinite;
+        }
+      `}</style>
+
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
           <motion.h1
@@ -387,6 +449,7 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Stat Cards Section */}
       <motion.div
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6"
         variants={containerVariants}
@@ -394,7 +457,12 @@ const Dashboard = () => {
         animate="visible"
       >
         {loading ? (
-          Array.from({ length: 4 }).map((_, i) => <StatCardSkeleton key={i} />)
+          // Skeleton dengan animasi
+          Array.from({ length: 4 }).map((_, i) => (
+            <motion.div key={i} variants={itemVariants}>
+              <StatCardSkeleton />
+            </motion.div>
+          ))
         ) : (
           <>
             <motion.div variants={itemVariants}>
@@ -438,8 +506,11 @@ const Dashboard = () => {
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Chart Section */}
         <motion.div
-          variants={itemVariants}
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}
           className="bg-white shadow-lg rounded-xl p-6 lg:col-span-2"
         >
           <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4">
@@ -474,15 +545,20 @@ const Dashboard = () => {
           </div>
           <div className="h-80">
             {loading || !chartData.labels ? (
-              <div className="w-full h-full bg-gray-200 rounded-lg animate-pulse"></div>
+              <div className="w-full h-full bg-gray-200 rounded-lg relative overflow-hidden">
+                <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer"></div>
+              </div>
             ) : (
               <Line data={chartData} options={chartOptions} />
             )}
           </div>
         </motion.div>
 
+        {/* Recent Guests Section */}
         <motion.div
-          variants={itemVariants}
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
           className="bg-white shadow-lg rounded-xl p-6"
         >
           <h2 className="text-xl font-bold text-gray-800 flex items-center mb-4">
@@ -497,16 +573,21 @@ const Dashboard = () => {
                   <th className="py-2 px-3 w-1/5 text-right">Tanggal</th>
                 </tr>
               </thead>
-              <motion.tbody
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                {recentGuests.length > 0 ? (
-                  recentGuests.map((guest) => (
+              <tbody>
+                {loading ? (
+                  // Skeleton table dengan 5 baris
+                  <tr>
+                    <td colSpan={3} className="py-3">
+                      <TableSkeleton />
+                    </td>
+                  </tr>
+                ) : recentGuests.length > 0 ? (
+                  recentGuests.map((guest, index) => (
                     <motion.tr
                       key={guest.id}
-                      variants={itemVariants}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
                       className="border-b border-gray-100 last:border-b-0"
                     >
                       <td className="py-3 px-3 font-medium text-gray-800">
@@ -531,13 +612,17 @@ const Dashboard = () => {
                     </motion.tr>
                   ))
                 ) : (
-                  <motion.tr variants={itemVariants}>
+                  <motion.tr
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
                     <td colSpan={3} className="py-4 text-center text-gray-500">
                       Tidak ada data tamu
                     </td>
                   </motion.tr>
                 )}
-              </motion.tbody>
+              </tbody>
             </table>
           </div>
         </motion.div>
