@@ -39,7 +39,7 @@ const Navbar = () => {
   const user = {
     name: userData?.name || "Admin",
     role: userData?.role || "Administrator",
-    avatar: null,
+    avatar: "/gambar/iconsekolah.png",
   };
 
   useEffect(() => {
@@ -168,17 +168,19 @@ const Navbar = () => {
             </div>
             {/* Avatar dengan status ring */}
             <div className="relative">
-              <div className="w-11 h-11 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white font-bold text-lg ring-2 ring-offset-2 ring-offset-white ring-sky-300">
-                {user.avatar ? (
+              {user.avatar ? (
+                <div className="w-11 h-11 rounded-full items-center justify-center">
                   <img
                     src={user.avatar}
                     alt={user.name}
                     className="w-full h-full rounded-full object-cover"
                   />
-                ) : (
+                </div>
+              ) : (
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white font-bold text-lg ring-2 ring-offset-2 ring-offset-white ring-sky-300">
                   <span>{getInitials(user.name)}</span>
-                )}
-              </div>
+                </div>
+              )}
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
             </div>
             <ChevronDown
@@ -208,20 +210,39 @@ const Navbar = () => {
                       Tahun Ajaran {academicYear}
                     </p>
                   </div>
-                  <Link
-                    to="/profile"
+
+                  {/* <Link
+                    to="/"
                     className="flex items-center w-full px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
                   >
-                    <User size={16} className="mr-3 text-gray-500" /> Profil
-                    Saya
-                  </Link>
-                  <Link
+                    <User size={16} className="mr-3 text-gray-500" />
+                    Profil Saya
+                  </Link> */}
+
+                  <div
+                    className="flex items-center w-full px-3 py-2 text-sm text-gray-700/50 rounded-md bg-gray-200/50 transition-colors
+                    cursor-not-allowed"
+                  >
+                    <User size={16} className="mr-3 text-gray-500/50" />
+                    Profil Saya (soon)
+                  </div>
+
+                  {/* <Link
                     to="/settings"
                     className="flex items-center w-full px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
                   >
                     <Settings size={16} className="mr-3 text-gray-500" />{" "}
                     Pengaturan
-                  </Link>
+                  </Link> */}
+
+                  <div
+                    className="flex items-center w-full px-3 py-2 text-sm text-gray-700/50 rounded-md bg-gray-200/50 transition-colors
+                    cursor-not-allowed"
+                  >
+                    <Settings size={16} className="mr-3 text-gray-500" />{" "}
+                    Pengaturan (soon)
+                  </div>
+
                   <div className="border-t border-gray-200 mt-1 pt-1">
                     <button
                       onClick={handleLogout}
