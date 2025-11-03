@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import Modal from "../components/Modal";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import {
@@ -19,50 +20,17 @@ import {
   CheckCircle,
   AlertTriangle,
   XCircle,
-  ListFilterPlus
+  ListFilterPlus,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
-const IMG_URL = import.meta.env.VITE_IMG_URL || "http://localhost:8000/uploads/foto_tamu";
+const IMG_URL =
+  import.meta.env.VITE_IMG_URL || "http://localhost:8000/uploads/foto_tamu";
 
 // =================================================================
 // KOMPONEN HELPER
 // =================================================================
-
-const Modal = ({ isOpen, onClose, title, children }) => (
-  <AnimatePresence>
-    {isOpen && (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-        onClick={onClose}
-      >
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0, y: 50 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.9, opacity: 0, y: 50 }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="relative bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="flex items-center justify-between p-5 border-b border-gray-200 sticky top-0 bg-white rounded-t-2xl z-10">
-            <h3 className="text-xl font-bold text-gray-800">{title}</h3>
-            <button
-              onClick={onClose}
-              className="p-1 rounded-full text-gray-400 hover:bg-gray-200 hover:text-gray-700 transition-colors"
-            >
-              <X size={24} />
-            </button>
-          </div>
-          <div className="flex-1 p-6 overflow-y-auto">{children}</div>
-        </motion.div>
-      </motion.div>
-    )}
-  </AnimatePresence>
-);
 
 const Notification = ({ notification, onDismiss }) => {
   const icons = {
@@ -236,15 +204,22 @@ const BukuTamuDetailModal = ({ tamu, onClose, loading, onDelete }) => {
 
   const formatDate = (dateString) => {
     if (!dateString) return "-";
-    const options = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    };
-    return new Date(dateString).toLocaleDateString("id-ID", options);
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "-";
+
+      const options = {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      };
+      return date.toLocaleDateString("id-ID", options);
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "-";
+    }
   };
 
   return (
@@ -254,7 +229,7 @@ const BukuTamuDetailModal = ({ tamu, onClose, loading, onDelete }) => {
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : (
-        <div className="space-y-6 max-h-[85vh] overflow-y-auto">
+        <div className="space-y-6 max-h-[85vh] p-6 overflow-y-auto">
           {/* FOTO BESAR HORIZONTAL */}
           <div className="text-center bg-gray-50 p-6 rounded-xl">
             {tamu.foto_tamu ? (
@@ -262,7 +237,7 @@ const BukuTamuDetailModal = ({ tamu, onClose, loading, onDelete }) => {
                 <img
                   src={`${IMG_URL}/${tamu.foto_tamu}`}
                   // alt={`Foto ${tamu.nama}`}
-                  alt='Foto Tamu'
+                  alt="Foto Tamu"
                   className="w-64 h-48 object-cover rounded-xl shadow-md border-4 border-white"
                 />
               </div>
@@ -276,14 +251,9 @@ const BukuTamuDetailModal = ({ tamu, onClose, loading, onDelete }) => {
             </h3>
             <p className="text-gray-500 capitalize">
               {tamu.role === "ortu"
-                ? `Orang Tua dari ${tamu.siswa?.namasiswa || "-"}`
+                ? `Orang Tua dari ${tamu.siswa?.nama_siswa || "-"}`
                 : tamu.instansi || "Tamu Umum"}
             </p>
-            {tamu.tahun_ajaran && (
-              <p className="text-sm text-blue-600 mt-1">
-                Tahun Ajaran: {tamu.tahun_ajaran.thnajaran}
-              </p>
-            )}
           </div>
 
           {/* INFORMASI TAMU */}
@@ -345,7 +315,16 @@ const BukuTamuDetailModal = ({ tamu, onClose, loading, onDelete }) => {
           >
             <DetailRow
               label="Bertemu Dengan"
-              value={tamu.pegawai?.namapegawai || "-"}
+              value={
+                tamu.pegawai?.nama_pegawai
+                  ? `${tamu.pegawai.nama_pegawai} 
+                  ${
+                    tamu.pegawai.jabatan?.nama_jabatan
+                      ? `(${tamu.pegawai.jabatan.nama_jabatan})`
+                      : ""
+                  }`
+                  : "-"
+              }
               icon={<User size={16} className="text-gray-400" />}
             />
             <DetailRow
@@ -353,16 +332,13 @@ const BukuTamuDetailModal = ({ tamu, onClose, loading, onDelete }) => {
               value={tamu.keperluan}
               icon={<FileText size={16} className="text-gray-400" />}
             />
-            <DetailRow
-              label="Nama Siswa"
-              value={tamu.siswa?.namasiswa}
-              icon={<GraduationCap size={16} className="text-gray-400" />}
-            />
-            <DetailRow
-              label="Tahun Ajaran"
-              value={tamu.tahun_ajaran?.thnajaran}
-              icon={<Calendar size={16} className="text-gray-400" />}
-            />
+            {tamu?.siswa && (
+              <DetailRow
+                label="Nama Siswa"
+                value={tamu.siswa?.nama_siswa || "-"}
+                icon={<GraduationCap size={16} className="text-gray-400" />}
+              />
+            )}
             <DetailRow
               label="Tanggal Kunjungan"
               value={formatDate(tamu.created_at)}
@@ -392,7 +368,7 @@ const BukuTamuDetailModal = ({ tamu, onClose, loading, onDelete }) => {
 
 const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, data }) => (
   <Modal isOpen={isOpen} onClose={onClose} title="Konfirmasi Hapus">
-    <div className="text-center">
+    <div className="p-6 text-center">
       <AlertTriangle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
       <h3 className="text-lg font-semibold text-gray-900 mb-2">
         Hapus Data Buku Tamu?
@@ -475,7 +451,7 @@ const BukuTamu = () => {
         page,
         search,
         rows_per_page: perPage,
-        ...(tahunAjaran && { tahun_ajaran: tahunAjaran })
+        ...(tahunAjaran && { tahun_ajaran: tahunAjaran }),
       };
 
       const response = await axios.get(`${API_URL}/bukutamu`, { params });
@@ -653,8 +629,10 @@ const BukuTamu = () => {
               <span>Filter Aktif:</span>
               {selectedTahunAjaran && (
                 <span className="bg-blue-100 px-2 py-1 rounded text-xs">
-                  Tahun Ajaran: {
-                    tahunAjaranOptions.find(t => t.id == selectedTahunAjaran)?.tahun_ajaran
+                  Tahun Ajaran:{" "}
+                  {
+                    tahunAjaranOptions.find((t) => t.id == selectedTahunAjaran)
+                      ?.tahun_ajaran
                   }
                 </span>
               )}
@@ -715,7 +693,14 @@ const BukuTamu = () => {
                       {tamu.role === "ortu" ? "Orang Tua" : "Tamu Umum"}
                     </td>
                     <td className="px-3 py-3 whitespace-nowrap text-left">
-                      {tamu.pegawai?.namapegawai || "-"}
+                      {tamu.pegawai?.nama_pegawai
+                        ? `${tamu.pegawai.nama_pegawai}
+                        ${
+                          tamu.pegawai.jabatan?.nama_jabatan
+                            ? ` (${tamu.pegawai.jabatan.nama_jabatan})`
+                            : ""
+                        }`
+                        : "-"}
                     </td>
                     <td className="px-3 py-3 whitespace-normal max-w-xs">
                       {tamu.keperluan}
