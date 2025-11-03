@@ -17,15 +17,13 @@ const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState("--:--");
   const [userData, setUserData] = useState(null);
-  const [tahunAjaran, setTahunAjaran] = useState("");
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
   // Ambil data user dan tahun ajaran dari localStorage
   useEffect(() => {
     const userFromStorage = localStorage.getItem("userData");
-    const thnAjaranFromStorage = localStorage.getItem("thnajaran");
-    
+
     if (userFromStorage) {
       try {
         setUserData(JSON.parse(userFromStorage));
@@ -36,8 +34,6 @@ const Navbar = () => {
     } else {
       setUserData({ name: "Admin", role: "Administrator" });
     }
-
-    setTahunAjaran(thnAjaranFromStorage || "2024/2025");
   }, []);
 
   const user = {
@@ -75,11 +71,15 @@ const Navbar = () => {
       // Panggil API logout jika ada token
       const token = localStorage.getItem("adminToken");
       if (token) {
-        await axios.post(`${API_URL}/logout`, {}, {
-          headers: {
-            Authorization: `Bearer ${token}`
+        await axios.post(
+          `${API_URL}/logout`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
       }
     } catch (err) {
       console.error("Logout error:", err);
@@ -90,7 +90,7 @@ const Navbar = () => {
       localStorage.removeItem("userData");
       localStorage.removeItem("idthnajaran");
       localStorage.removeItem("thnajaran");
-      
+
       setIsDropdownOpen(false);
       navigate("/login");
     }
@@ -104,6 +104,23 @@ const Navbar = () => {
     ).toUpperCase();
   };
 
+  const today = new Date();
+  const formattedDate = today.toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+
+  // Tahun ajaran biasanya tergantung tahun sekarang
+  // Misal jika sekarang November 2025 -> TA 2025/2026
+  // Jika bulan < 7 (Januari–Juni), maka TA tahun sebelumnya
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth() + 1;
+  const academicYear =
+    currentMonth >= 7
+      ? `${currentYear}/${currentYear + 1}`
+      : `${currentYear - 1}/${currentYear}`;
+
   return (
     <motion.header
       className="fixed top-0 left-72 right-0 h-24 bg-white/70 backdrop-blur-xl z-30 shadow-sm shadow-black/5"
@@ -112,19 +129,28 @@ const Navbar = () => {
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
       <div className="flex justify-between items-center h-full px-8">
-        {/* Info Cluster: Jam dan TA */}
+        {/* Info Cluster: Jam, Tanggal, dan Tahun Ajaran */}
         <div className="flex items-center gap-4 bg-gray-100/80 border border-gray-200/80 rounded-full px-4 py-2">
+          {/* Jam */}
           <div className="flex items-center gap-2 text-gray-700">
             <Clock size={18} className="text-sky-600" />
             <span className="font-semibold text-sm font-mono tracking-wider">
               {currentTime}
             </span>
           </div>
+
+          {/* Pemisah */}
           <div className="h-4 w-px bg-gray-300"></div>
+
+          {/* Tanggal dan Tahun Ajaran */}
           <div className="hidden md:flex items-center gap-2 text-sm text-gray-700">
             <CalendarDays size={18} className="text-sky-600" />
-            <span className="font-medium">
-              TA: <strong className="text-gray-900">{tahunAjaran}</strong>
+            <span className="font-medium flex items-center gap-1">
+              <strong className="text-gray-900">{formattedDate}</strong>
+              <span className="text-gray-500">•</span>
+              <span className="text-sky-700 font-semibold">
+                TA {academicYear}
+              </span>
             </span>
           </div>
         </div>
@@ -179,20 +205,22 @@ const Navbar = () => {
                     </p>
                     <p className="text-xs text-gray-500">{user.role}</p>
                     <p className="text-xs text-sky-600 mt-1">
-                      Tahun Ajaran: {tahunAjaran}
+                      Tahun Ajaran {academicYear}
                     </p>
                   </div>
                   <Link
                     to="/profile"
                     className="flex items-center w-full px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
                   >
-                    <User size={16} className="mr-3 text-gray-500" /> Profil Saya
+                    <User size={16} className="mr-3 text-gray-500" /> Profil
+                    Saya
                   </Link>
                   <Link
                     to="/settings"
                     className="flex items-center w-full px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
                   >
-                    <Settings size={16} className="mr-3 text-gray-500" /> Pengaturan
+                    <Settings size={16} className="mr-3 text-gray-500" />{" "}
+                    Pengaturan
                   </Link>
                   <div className="border-t border-gray-200 mt-1 pt-1">
                     <button
