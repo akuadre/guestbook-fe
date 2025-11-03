@@ -378,7 +378,8 @@ const Dashboard = () => {
   const welcomeMessage = () => {
     const hour = new Date().getHours();
     if (hour < 12) return "Selamat Pagi, Admin!";
-    if (hour < 18) return "Selamat Siang, Admin!";
+    if (hour < 15) return "Selamat Siang, Admin!";
+    if (hour < 18) return "Selamat Sore, Admin!";
     return "Selamat Malam, Admin!";
   };
 
