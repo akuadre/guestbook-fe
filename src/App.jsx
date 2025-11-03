@@ -92,7 +92,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/siswa" element={<Siswa />} />
             {/* <Route path="/orangtua" element={<OrangTua />} /> */}
-            {/* <Route path="/jabatan" element={<Jabatan />} /> */}
+            <Route path="/jabatan" element={<Jabatan />} />
             <Route path="/pegawai" element={<Pegawai />} />
             <Route path="/bukutamu" element={<BukuTamu />} />
             <Route path="/about" element={<About />} />

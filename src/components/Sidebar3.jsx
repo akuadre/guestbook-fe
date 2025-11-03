@@ -118,7 +118,7 @@ const Sidebar = () => {
             icon: Building,
             label: "Pegawai",
             sub: [
-              // { path: "/jabatan", label: "Data Jabatan", icon: ClipboardList },
+              { path: "/jabatan", label: "Data Jabatan", icon: ClipboardList },
               { path: "/pegawai", label: "Data Pegawai", icon: Users },
             ],
           },
