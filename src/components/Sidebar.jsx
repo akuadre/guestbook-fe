@@ -15,6 +15,42 @@ import {
   Info,
 } from "lucide-react";
 
+const itemVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
+};
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const dropdownVariants = {
+  hidden: {
+    opacity: 0,
+    height: 0,
+    transition: { duration: 0.3, ease: "easeOut" },
+  },
+  visible: {
+    opacity: 1,
+    height: "auto",
+    transition: {
+      duration: 0.3,
+      ease: "easeOut",
+      staggerChildren: 0.1,
+    },
+  },
+};
+
 const logoIcon = "/gambar/icon2.png";
 
 const Sidebar = () => {
@@ -42,19 +78,18 @@ const Sidebar = () => {
     setOpenMenus((prev) => ({ ...prev, [menu]: !prev[menu] }));
   };
 
-  // [!!!] FUNGSI STYLING BARU - KUNCI DARI TAMPILAN MEWAH
   const getLinkClass = ({ isActive }) =>
-    `relative flex items-center justify-between w-full p-3 px-4 rounded-lg transition-all duration-300 ease-in-out group ${
+    `relative flex items-center justify-between w-full p-3 rounded-2xl transition-all duration-300 group ${
       isActive
-        ? "bg-gradient-to-r from-sky-500/20 to-sky-500/0 text-white font-semibold shadow-[inset_2px_0_0_0_#0ea5e9,0_0_15px_rgba(56,189,248,0.2)]"
-        : "text-gray-400 hover:bg-white/10 hover:text-white"
+        ? "bg-gradient-to-r from-sky-500/20 to-transparent text-white shadow-inner"
+        : "text-gray-400 hover:bg-white/5 hover:text-white"
     }`;
 
   const getSubLinkClass = ({ isActive }) =>
-    `relative flex items-center w-full text-sm p-2 px-3 rounded-md transition-all duration-200 ${
+    `flex items-center w-full text-sm p-2.5 px-6 rounded-xl transition-all duration-200 ${
       isActive
-        ? "text-sky-300 font-medium bg-sky-500/10"
-        : "text-gray-500 hover:bg-gray-700/50 hover:text-gray-300"
+        ? "text-sky-300 bg-sky-500/10 font-medium"
+        : "text-gray-500 hover:text-gray-300 hover:bg-gray-700/30"
     }`;
 
   const dropdownVariants = {
@@ -144,17 +179,38 @@ const Sidebar = () => {
       </motion.div>
 
       {/* Navigation Menu */}
-      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-        <p className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-          Menu
-        </p>
+      <motion.nav
+        className="flex-1 p-4 space-y-1 overflow-y-auto"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.p
+          variants={itemVariants}
+          className="px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-white/5"
+        >
+          Navigation
+        </motion.p>
 
-        {/* Dashboard */}
-        <NavLink to="/dashboard" className={getLinkClass}>
-          <div className="flex items-center gap-4">
-            <LayoutDashboard size={20} /> <span>Dashboard</span>
-          </div>
-        </NavLink>
+        {/* Menu items dengan modern touch */}
+        <motion.div variants={itemVariants}>
+          <NavLink to="/dashboard" className={getLinkClass}>
+            {({ isActive }) => (
+              <div className="flex items-center gap-4">
+                <div
+                  className={`p-2 rounded-lg ${
+                    isActive
+                      ? "bg-sky-500"
+                      : "bg-gray-700 group-hover:bg-sky-500"
+                  } transition-colors duration-300`}
+                >
+                  <LayoutDashboard size={18} />
+                </div>
+                <span>Dashboard</span>
+              </div>
+            )}
+          </NavLink>
+        </motion.div>
 
         {/* Dropdown Menu */}
         {[
@@ -185,7 +241,11 @@ const Sidebar = () => {
             ],
           },
         ].map((menu) => (
-          <div key={menu.key} className="space-y-1">
+          <motion.div
+            key={menu.key}
+            className="space-y-1"
+            variants={itemVariants}
+          >
             <button
               onClick={() => handleMenuToggle(menu.key)}
               className={getLinkClass({})}
@@ -193,13 +253,14 @@ const Sidebar = () => {
               <div className="flex items-center gap-4">
                 <menu.icon size={20} /> <span>{menu.label}</span>
               </div>
-              <ChevronRight
-                size={16}
-                className={`transition-transform duration-300 ${
-                  openMenus[menu.key] ? "rotate-90" : ""
-                }`}
-              />
+              <motion.div
+                animate={{ rotate: openMenus[menu.key] ? 90 : 0 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                <ChevronRight size={16} />
+              </motion.div>
             </button>
+
             <AnimatePresence>
               {openMenus[menu.key] && (
                 <motion.div
@@ -209,34 +270,34 @@ const Sidebar = () => {
                   exit="hidden"
                   className="overflow-hidden"
                 >
-                  {/* [!] Desain Sub-menu baru dengan garis indikator */}
                   <div className="pl-8 ml-4 border-l border-gray-700 space-y-1 pt-1">
-                    {menu.sub.map((subItem) => (
-                      <NavLink
-                        key={subItem.path}
-                        to={subItem.path}
-                        className={getSubLinkClass}
-                      >
-                        <subItem.icon size={16} className="inline mr-2" />
-                        <span>{subItem.label}</span>
-                      </NavLink>
+                    {menu.sub.map((subItem, index) => (
+                      <motion.div key={subItem.path} variants={itemVariants}>
+                        <NavLink to={subItem.path} className={getSubLinkClass}>
+                          <subItem.icon size={16} className="inline mr-2" />
+                          <span>{subItem.label}</span>
+                        </NavLink>
+                      </motion.div>
                     ))}
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </motion.div>
         ))}
-      </nav>
-
+      </motion.nav>
+      
       {/* Sidebar Footer */}
-      <div className="p-4 border-t border-white/10">
+      <motion.div
+        className="p-4 border-t border-white/10"
+        variants={itemVariants}
+      >
         <Link to="/about" className={getLinkClass({})}>
           <div className="flex items-center gap-4">
             <Info size={20} /> <span>Tentang Aplikasi</span>
           </div>
         </Link>
-      </div>
+      </motion.div>
     </aside>
   );
 };
