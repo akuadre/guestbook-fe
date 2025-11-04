@@ -911,7 +911,7 @@ const Siswa = () => {
             Manajemen Data Siswa
           </h1>
           <p className="text-gray-500 mt-1">
-            Menampilkan data siswa yang telah disinkronkan.
+            Kelola dan lihat data siswa di halaman ini.
           </p>
         </div>
 

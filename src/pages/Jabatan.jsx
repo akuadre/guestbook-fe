@@ -492,7 +492,7 @@ const Jabatan = () => {
             Manajemen Data Jabatan
           </h1>
           <p className="text-gray-500 mt-1">
-            Menampilkan data jabatan yang tersedia.
+            Kelola dan lihat data jabatan di halaman ini.
           </p>
         </div>
 

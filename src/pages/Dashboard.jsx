@@ -445,7 +445,7 @@ const Dashboard = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            Berikut adalah ringkasan data dari sistem Anda.
+            Berikut adalah ringkasan data dari sistem manajemen buku tamu.
           </motion.p>
         </div>
       </div>

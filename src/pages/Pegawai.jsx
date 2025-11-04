@@ -800,7 +800,7 @@ const Pegawai = () => {
             Manajemen Data Pegawai
           </h1>
           <p className="text-gray-500 mt-1">
-            Menampilkan data pegawai yang telah disinkronkan.
+            Kelola dan lihat data pegawai di halaman ini.
           </p>
         </div>
 
