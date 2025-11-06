@@ -25,7 +25,6 @@ const Navbar = () => {
   const [currentTime, setCurrentTime] = useState("--:--");
   const [userData, setUserData] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [darkMode, setDarkMode] = useState(false);
   const dropdownRef = useRef(null);
   const notificationRef = useRef(null);
   const navigate = useNavigate();
@@ -161,23 +160,17 @@ const Navbar = () => {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
-      <div className="flex justify-between items-center h-full px-8">
-        {/* Left Section - Search Bar */}
-        <div className="flex-1 max-w-lg">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Cari tamu, pegawai, atau data..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-gray-100/80 border border-gray-300/50 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-300"
-            />
-          </div>
+      <div className="flex justify-between items-center h-full px-8 gap-8">
+        {/* Left Section - Page Title/Breadcrumb */}
+        <div className="flex-1">
+          <h1 className="text-xl font-bold text-gray-800">Dashboard</h1>
+          <p className="text-sm text-gray-500">
+            Selamat datang kembali, {user.name}
+          </p>
         </div>
 
         {/* Center Section - Time & Date */}
-        <div className="flex items-center gap-6 mx-8">
+        <div className="flex items-center gap-6">
           <div className="flex items-center gap-2 bg-gradient-to-r from-slate-800 to-slate-700 text-white px-4 py-2 rounded-full shadow-lg border border-slate-600/30">
             <Clock size={18} className="text-sky-300" />
             <span className="font-bold text-sm font-mono tracking-wider">
@@ -198,18 +191,6 @@ const Navbar = () => {
 
         {/* Right Section - Icons & Profile */}
         <div className="flex items-center gap-3">
-          {/* Theme Toggle */}
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="p-2 rounded-lg hover:bg-gray-200/60 transition-colors duration-200"
-          >
-            {darkMode ? (
-              <Sun size={20} className="text-gray-600" />
-            ) : (
-              <Moon size={20} className="text-gray-600" />
-            )}
-          </button>
-
           {/* Help */}
           <button className="p-2 rounded-lg hover:bg-gray-200/60 transition-colors duration-200">
             <HelpCircle size={20} className="text-gray-600" />
