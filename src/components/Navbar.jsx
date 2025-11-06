@@ -72,7 +72,10 @@ const Navbar = () => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
       }
-      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target)
+      ) {
         setIsNotificationOpen(false);
       }
     };
@@ -126,12 +129,30 @@ const Navbar = () => {
 
   // Mock notifications
   const notifications = [
-    { id: 1, title: "Tamu Baru", message: "Budi Santoso telah mengisi buku tamu", time: "5 menit lalu", unread: true },
-    { id: 2, title: "Pengingat", message: "Rapat orang tua siswa besok", time: "1 jam lalu", unread: true },
-    { id: 3, title: "Sistem", message: "Backup database berhasil", time: "2 hari lalu", unread: false },
+    {
+      id: 1,
+      title: "Tamu Baru",
+      message: "Budi Santoso telah mengisi buku tamu",
+      time: "5 menit lalu",
+      unread: true,
+    },
+    {
+      id: 2,
+      title: "Pengingat",
+      message: "Rapat orang tua siswa besok",
+      time: "1 jam lalu",
+      unread: true,
+    },
+    {
+      id: 3,
+      title: "Sistem",
+      message: "Backup database berhasil",
+      time: "2 hari lalu",
+      unread: false,
+    },
   ];
 
-  const unreadCount = notifications.filter(n => n.unread).length;
+  const unreadCount = notifications.filter((n) => n.unread).length;
 
   return (
     <motion.header
@@ -157,9 +178,8 @@ const Navbar = () => {
 
         {/* Center Section - Time & Date */}
         <div className="flex items-center gap-6 mx-8">
-          {/* Time */}
-          <div className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full shadow-lg">
-            <Clock size={18} className="text-white" />
+          <div className="flex items-center gap-2 bg-gradient-to-r from-slate-800 to-slate-700 text-white px-4 py-2 rounded-full shadow-lg border border-slate-600/30">
+            <Clock size={18} className="text-sky-300" />
             <span className="font-bold text-sm font-mono tracking-wider">
               {currentTime}
             </span>
@@ -167,8 +187,12 @@ const Navbar = () => {
 
           {/* Date & Academic Year */}
           <div className="hidden lg:flex flex-col items-center text-center">
-            <span className="text-sm font-semibold text-gray-700">{formattedDate}</span>
-            <span className="text-xs text-blue-600 font-medium">TA {academicYear}</span>
+            <span className="text-sm font-semibold text-gray-700">
+              {formattedDate}
+            </span>
+            <span className="text-xs text-blue-600 font-medium">
+              TA {academicYear}
+            </span>
           </div>
         </div>
 
@@ -179,7 +203,11 @@ const Navbar = () => {
             onClick={() => setDarkMode(!darkMode)}
             className="p-2 rounded-lg hover:bg-gray-200/60 transition-colors duration-200"
           >
-            {darkMode ? <Sun size={20} className="text-gray-600" /> : <Moon size={20} className="text-gray-600" />}
+            {darkMode ? (
+              <Sun size={20} className="text-gray-600" />
+            ) : (
+              <Moon size={20} className="text-gray-600" />
+            )}
           </button>
 
           {/* Help */}
@@ -217,15 +245,21 @@ const Navbar = () => {
                       <div
                         key={notification.id}
                         className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
-                          notification.unread ? 'bg-blue-50' : ''
+                          notification.unread ? "bg-blue-50" : ""
                         }`}
                       >
                         <div className="flex justify-between items-start">
                           <div>
-                            <p className="font-medium text-sm text-gray-900">{notification.title}</p>
-                            <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
+                            <p className="font-medium text-sm text-gray-900">
+                              {notification.title}
+                            </p>
+                            <p className="text-sm text-gray-600 mt-1">
+                              {notification.message}
+                            </p>
                           </div>
-                          <span className="text-xs text-gray-400">{notification.time}</span>
+                          <span className="text-xs text-gray-400">
+                            {notification.time}
+                          </span>
                         </div>
                       </div>
                     ))}
@@ -248,10 +282,12 @@ const Navbar = () => {
               whileTap={{ scale: 0.95 }}
             >
               <div className="text-right hidden lg:block">
-                <p className="font-semibold text-sm text-gray-800">{user.name}</p>
+                <p className="font-semibold text-sm text-gray-800">
+                  {user.name}
+                </p>
                 <p className="text-xs text-gray-500">{user.role}</p>
               </div>
-              
+
               <div className="relative">
                 {user.avatar ? (
                   <img
@@ -266,7 +302,7 @@ const Navbar = () => {
                 )}
                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
               </div>
-              
+
               <ChevronDown
                 size={16}
                 className={`text-gray-500 transition-transform duration-300 ${
@@ -284,9 +320,13 @@ const Navbar = () => {
                   exit={{ opacity: 0, scale: 0.95, y: -10 }}
                 >
                   <div className="p-4 border-b border-gray-200">
-                    <p className="font-semibold text-gray-900 truncate">{user.name}</p>
+                    <p className="font-semibold text-gray-900 truncate">
+                      {user.name}
+                    </p>
                     <p className="text-sm text-gray-500">{user.role}</p>
-                    <p className="text-xs text-blue-600 mt-1">TA {academicYear}</p>
+                    <p className="text-xs text-blue-600 mt-1">
+                      TA {academicYear}
+                    </p>
                   </div>
 
                   <div className="p-2">
