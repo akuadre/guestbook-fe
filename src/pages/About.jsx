@@ -40,58 +40,45 @@ const cardVariants = {
 };
 // --- End Animation Variants ---
 
-// Komponen Card yang lebih modern
 const DeveloperCard = ({ name, website, role, techStack }) => {
   return (
     <motion.div
-      className="relative bg-gradient-to-br from-white to-blue-50 p-6 rounded-2xl shadow-xl group overflow-hidden border border-blue-100 glow-card hover:shadow-2xl transition-all duration-300"
+      className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-xl border border-gray-200 shadow-sm hover:border-gray-300 transition-all duration-300"
       variants={cardVariants}
-      whileHover={{ y: -5, transition: { duration: 0.2 } }}
+      whileHover={{ y: -2 }}
     >
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      <div className="flex items-start space-x-4">
+        <div className="relative">
+          <img
+            src={profileImage}
+            alt={name}
+            className="h-16 w-16 rounded-xl object-cover border-2 border-white shadow-lg ring-2 ring-blue-500/20"
+          />
+          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-r from-blue-500 to-cyan-300 rounded-full border-2 border-white shadow-sm"></div>
+        </div>
+        <div className="text-left flex-1">
+          <h3 className="text-xl font-semibold text-gray-900 mb-1">{name}</h3>
+          <p className="text-gray-500 text-sm mb-3">{role}</p>
 
-      <div className="relative z-10">
-        <div className="flex items-start space-x-4">
-          <div className="relative">
-            <img
-              src={profileImage}
-              alt={name}
-              className="h-16 w-16 rounded-2xl object-cover border-2 border-white shadow-lg ring-2 ring-blue-200"
-            />
-            <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-blue-500 to-cyan-500 p-1 rounded-full">
-              <Zap className="h-3 w-3 text-white" />
-            </div>
-          </div>
-          <div className="text-left flex-1">
-            <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-              {name}
-            </h3>
-            <p className="text-gray-600 font-medium mt-1">{role}</p>
+          <a
+            href={`https://${website}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-700 hover:text-gray-900 transition-colors inline-flex items-center text-sm font-medium"
+          >
+            {website}
+            <ExternalLink className="h-3 w-3 ml-1" />
+          </a>
 
-            <a
-              href={`https://${website}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 hover:text-blue-700 transition-colors inline-flex items-center group/link mt-2 font-semibold"
-            >
-              <span className="bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">
-                {website}
+          <div className="mt-4 flex flex-wrap gap-2">
+            {techStack.map((tech, index) => (
+              <span
+                key={index}
+                className="px-2 py-1 bg-white text-gray-700 rounded text-xs font-medium border border-gray-300 shadow-sm"
+              >
+                {tech}
               </span>
-              <ExternalLink className="h-4 w-4 ml-1.5 opacity-70 group-hover/link:opacity-100 transition-opacity" />
-            </a>
-
-            {/* Tech Stack */}
-            <div className="mt-4 flex flex-wrap gap-2">
-              {techStack.map((tech, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium border border-blue-200"
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -119,13 +106,7 @@ const FeatureCard = ({ icon: Icon, title, description, color }) => {
 };
 
 const About = () => {
-  const techStack = [
-    "React",
-    "Laravel",
-    "TailwindCSS",
-    "MySQL",
-    "REST API",
-  ];
+  const techStack = ["React", "Laravel", "TailwindCSS", "MySQL", "REST API"];
 
   return (
     <>
@@ -202,7 +183,7 @@ const About = () => {
               variants={itemVariants}
               className="text-5xl md:text-6xl font-bold text-gray-900 mb-6"
             >
-              School <span className="gradient-text">Guestbook</span>
+              School Guestbook
             </motion.h1>
 
             <motion.p
@@ -222,7 +203,7 @@ const About = () => {
             </h2>
             <div className="max-w-2xl mx-auto">
               <DeveloperCard
-                name="Adrenalin M. Dewangga"
+                name="Adrenalin Muhammad D"
                 website="adre.vercel.app"
                 role="Junior Web Developer"
                 techStack={techStack}
