@@ -178,7 +178,7 @@ const SiswaDetailModal = ({ siswa, onClose, loading, onEdit, onDelete }) => {
     if (cleaned.startsWith("0")) {
       cleaned = "62" + cleaned.substring(1);
     }
-    return cleaned;
+    return cleaned;``
   };
 
   return (
@@ -260,7 +260,7 @@ const SiswaDetailModal = ({ siswa, onClose, loading, onEdit, onDelete }) => {
                 <IconWhatsApp />
                 Hubungi via WhatsApp
               </a>
-              <p className="text-sm text-gray-500 mt-2">
+              <p className="text-sm text-gray-500 mt-2 mb-12">
                 Klik tombol di atas untuk menghubungi {siswa.nama_siswa} via
                 WhatsApp
               </p>

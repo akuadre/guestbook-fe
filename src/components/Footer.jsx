@@ -18,13 +18,8 @@ const Footer = () => {
         {/* Bagian Kanan: Info & Links */}
         <div className="flex items-center gap-4 mt-2 sm:mt-0">
             <span className="hidden md:inline">
-                Dibuat dengan ❤️ di SMKN 1 Cimahi
+                Made with ❤️ by Software Engineer Student
             </span>
-            {/* [!] Link placeholder untuk kesan premium */}
-            <div className="flex items-center gap-4 text-gray-600 font-medium">
-                <a href="#" className="hover:text-sky-600 transition-colors">Bantuan</a>
-                <a href="#" className="hover:text-sky-600 transition-colors">Lisensi</a>
-            </div>
         </div>
 
       </div>
