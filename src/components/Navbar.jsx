@@ -14,6 +14,7 @@ import {
   Sun,
   Moon,
   HelpCircle,
+  Home,
 } from "lucide-react";
 import axios from "axios";
 
@@ -172,10 +173,10 @@ const Navbar = ({ isCollapsed, isMobileMenuOpen, setIsMobileMenuOpen }) => {
             <Menu size={24} />
           </button>
           <div className="hidden sm:block">
-          <h1 className="text-xl font-bold text-gray-800">Dashboard</h1>
-          <p className="text-sm text-gray-500">
-            Selamat datang kembali, {user.name}
-          </p>
+            <h1 className="text-xl font-bold text-gray-800">Dashboard</h1>
+            <p className="text-sm text-gray-500">
+              Selamat datang kembali, {user.name}
+            </p>
           </div>
         </div>
 
@@ -257,20 +258,18 @@ const Navbar = ({ isCollapsed, isMobileMenuOpen, setIsMobileMenuOpen }) => {
                   </div>
 
                   <div className="p-2">
-                    <button className="flex items-center w-full px-3 py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-100 transition-colors mb-1">
-                      <User size={16} className="mr-3 text-gray-500" />
-                      Profil Saya
-                    </button>
-
-                    <button className="flex items-center w-full px-3 py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-100 transition-colors mb-1">
-                      <Settings size={16} className="mr-3 text-gray-500" />
-                      Pengaturan
+                    <button
+                      onClick={() => navigate("/")}
+                      className="flex items-center w-full px-3 py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-100 transition-colors mb-1 cursor-pointer"
+                    >
+                      <Home size={16} className="mr-3 text-gray-500" />
+                      Home Page
                     </button>
 
                     <div className="border-t border-gray-200 mt-2 pt-2">
                       <button
                         onClick={handleLogout}
-                        className="flex items-center w-full px-3 py-2 text-sm text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+                        className="flex items-center w-full px-3 py-2 text-sm text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
                       >
                         <LogOut size={16} className="mr-3" />
                         Keluar

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { InputField, SelectField } from "./InputField";
 import WebcamCapture from "./WebcamCapture";
+import Notification from "./Notification";
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
@@ -34,6 +35,7 @@ const GeneralGuestForm = () => {
 
   const [loading, setLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true); // NEW: Loading state untuk data
+  const [notification, setNotification] = useState(null);
 
   // Load form data dari API
   useEffect(() => {
@@ -104,7 +106,7 @@ const GeneralGuestForm = () => {
       );
 
       if (response.data.success) {
-        alert("✅ Data berhasil disimpan!");
+        setNotification({ type: "success", text: "Data berhasil disimpan!" });
         setFormData({
           nama: "",
           instansi: "",
@@ -117,20 +119,22 @@ const GeneralGuestForm = () => {
         
         setTimeout(() => {
           navigate("/");
-        }, 1000);
+        }, 1500);
       } else {
-        alert("❌ Gagal menyimpan data: " + response.data.message);
+        setNotification({ type: "error", text: "Gagal menyimpan data: " + response.data.message });
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("❌ Terjadi kesalahan saat menyimpan data.");
+      setNotification({ type: "error", text: "Terjadi kesalahan saat menyimpan data." });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <>
+      <Notification notification={notification} onDismiss={() => setNotification(null)} />
+      <form onSubmit={handleSubmit} className="space-y-6">
       <WebcamCapture onCapture={handlePhotoCapture} />
 
       {/* SINGLE COLUMN LAYOUT */}
@@ -149,6 +153,7 @@ const GeneralGuestForm = () => {
         <InputField
           label="Nomor Handphone"
           id="guestContact"
+          type="number"
           icon={Phone}
           placeholder="Contoh: 081234567890"
           name="kontak"
@@ -225,6 +230,7 @@ const GeneralGuestForm = () => {
         </button>
       </div>
     </form>
+    </>
   );
 };
 
