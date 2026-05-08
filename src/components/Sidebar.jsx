@@ -106,7 +106,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileMenuOpen, setIsMobileMen
 
   return (
     // [!] Background Gradient Mewah dan penambahan border kanan lembut
-    <aside className={`fixed top-0 left-0 h-full bg-gradient-to-br from-[#101831] to-[#1a254a] flex flex-col z-40 border-r border-white/10 transition-all duration-300 ease-in-out ${isCollapsed ? "w-20" : "w-72"} ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
+    <aside className={`fixed top-0 left-0 h-full bg-gradient-to-br from-[#101831] to-[#1a254a] flex flex-col z-50 border-r border-white/10 transition-all duration-300 ease-in-out ${isCollapsed ? "w-20" : "w-72"} ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
       {/* App Header - Glassmorphism */}
       {/* <div className="relative px-6 py-5 border-b border-white/10 bg-gradient-to-r from-sky-500/10 to-purple-500/10 backdrop-blur-lg">
         <div className="absolute inset-0 bg-gradient-to-r from-sky-400/5 to-purple-400/5 blur-sm"></div>

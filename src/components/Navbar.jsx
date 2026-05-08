@@ -155,7 +155,7 @@ const Navbar = ({ isCollapsed, isMobileMenuOpen, setIsMobileMenuOpen }) => {
 
   return (
     <motion.header
-      className={`fixed top-0 right-0 h-24 bg-white/80 backdrop-blur-xl z-30 border-b border-gray-200/60 transition-all duration-300 ease-in-out ${
+      className={`fixed top-0 right-0 h-24 bg-white/80 backdrop-blur-xl z-40 border-b border-gray-200/60 transition-all duration-300 ease-in-out ${
         isCollapsed ? "md:left-20" : "md:left-72"
       } left-0`}
       initial={{ y: -100, opacity: 0 }}
