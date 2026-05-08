@@ -32,7 +32,7 @@ ChartJS.register(
   LineElement,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
@@ -40,23 +40,23 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 // --- Animation Variants for Framer Motion ---
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: { 
-    opacity: 1, 
-    transition: { 
+  visible: {
+    opacity: 1,
+    transition: {
       staggerChildren: 0.05,
-      delayChildren: 0.1 
-    } 
+      delayChildren: 0.1,
+    },
   },
 };
 const itemVariants = {
   hidden: { y: 10, opacity: 0 },
-  visible: { 
-    y: 0, 
-    opacity: 1, 
-    transition: { 
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
       duration: 0.3,
-      ease: "easeOut"
-    } 
+      ease: "easeOut",
+    },
   },
 };
 
@@ -122,7 +122,7 @@ const generateFallbackChartData = (filterType, options) => {
       const daysInMonth = new Date(
         options.year,
         options.month + 1,
-        0
+        0,
       ).getDate();
       labels = Array.from({ length: daysInMonth }, (_, i) => `${i + 1}`);
       data = labels.map(() => random(10, 50));
@@ -387,7 +387,7 @@ const Dashboard = () => {
     switch (filterType) {
       case "harian":
         return `Statistik Kunjungan - ${new Date(
-          selectedDate + "T00:00:00"
+          selectedDate + "T00:00:00",
         ).toLocaleDateString("id-ID", {
           day: "numeric",
           month: "long",
@@ -398,12 +398,12 @@ const Dashboard = () => {
           selectedWeek.week
         }, ${new Date(selectedWeek.year, selectedWeek.month).toLocaleString(
           "id-ID",
-          { month: "long", year: "numeric" }
+          { month: "long", year: "numeric" },
         )}`;
       case "bulanan":
         return `Statistik Kunjungan - ${new Date(
           selectedMonth.year,
-          selectedMonth.month
+          selectedMonth.month,
         ).toLocaleString("id-ID", { month: "long", year: "numeric" })}`;
       case "tahunan":
         return `Statistik Kunjungan - Tahun ${selectedYear}`;
@@ -414,7 +414,7 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8">
-      {/* Tambahkan custom CSS untuk animasi shimmer di global style */}
+      {/* Custom CSS untuk animasi shimmer di global style */}
       <style jsx>{`
         @keyframes shimmer {
           0% {
@@ -429,6 +429,7 @@ const Dashboard = () => {
         }
       `}</style>
 
+      {/* Header & Welcome Message */}
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
           <motion.h1
@@ -450,7 +451,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Stat Cards Section */}
+      {/* 1. Stat Cards Section */}
       <motion.div
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6"
         variants={containerVariants}
@@ -506,128 +507,126 @@ const Dashboard = () => {
         )}
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Chart Section */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="bg-white shadow-lg rounded-xl p-6 lg:col-span-2"
-        >
-          <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4">
-            <h2 className="text-xl font-bold text-gray-800 flex items-center">
-              <BarChart2 className="w-6 h-6 mr-2 text-blue-500" />
-              {getChartTitle()}
-            </h2>
-            <div className="flex items-center gap-2">
-              <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                className="border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-              >
-                <option value="harian">Harian</option>
-                <option value="mingguan">Mingguan</option>
-                <option value="bulanan">Bulanan</option>
-                <option value="tahunan">Tahunan</option>
-              </select>
-            </div>
-          </div>
-          <div className="mb-4 p-3 bg-gray-50 rounded-lg flex flex-wrap items-center gap-4 text-sm">
-            {filterType === "harian" && (
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                max={getTodayString()}
-                className="border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            )}
-            {/* Filter lain bisa ditambahkan kembali di sini jika perlu */}
-          </div>
-          <div className="h-80">
-            {loading || !chartData.labels ? (
-              <div className="w-full h-full bg-gray-200 rounded-lg relative overflow-hidden">
-                <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer"></div>
-              </div>
-            ) : (
-              <Line data={chartData} options={chartOptions} />
-            )}
-          </div>
-        </motion.div>
-
-        {/* Recent Guests Section */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-white shadow-lg rounded-xl p-6"
-        >
-          <h2 className="text-xl font-bold text-gray-800 flex items-center mb-4">
-            <UserCheck className="w-6 h-6 mr-2 text-green-500" /> Tamu Terbaru
+      {/* 2. Chart Section (Bebas dari grid 1 baris, jadi full width) */}
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="bg-white shadow-lg rounded-xl p-6 w-full"
+      >
+        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4">
+          <h2 className="text-xl font-bold text-gray-800 flex items-center">
+            <BarChart2 className="w-6 h-6 mr-2 text-blue-500" />
+            {getChartTitle()}
           </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[500px]">
-              <thead className="text-left text-gray-500 uppercase text-xs font-semibold border-b-2 border-gray-200">
+          <div className="flex items-center gap-2">
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            >
+              <option value="harian">Harian</option>
+              <option value="mingguan">Mingguan</option>
+              <option value="bulanan">Bulanan</option>
+              <option value="tahunan">Tahunan</option>
+            </select>
+          </div>
+        </div>
+        <div className="mb-4 p-3 bg-gray-50 rounded-lg flex flex-wrap items-center gap-4 text-sm">
+          {filterType === "harian" && (
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              max={getTodayString()}
+              className="border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          )}
+          {/* Filter lain bisa ditambahkan kembali di sini jika perlu */}
+        </div>
+        <div className="h-80">
+          {loading || !chartData.labels ? (
+            <div className="w-full h-full bg-gray-200 rounded-lg relative overflow-hidden">
+              <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer"></div>
+            </div>
+          ) : (
+            <Line data={chartData} options={chartOptions} />
+          )}
+        </div>
+      </motion.div>
+
+      {/* 3. Recent Guests Section (Pindah ke atas Statistik, Full Width) */}
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.15 }}
+        className="bg-white shadow-lg rounded-xl p-6 w-full"
+      >
+        <h2 className="text-xl font-bold text-gray-800 flex items-center mb-4">
+          <UserCheck className="w-6 h-6 mr-2 text-green-500" /> Tamu Terbaru
+        </h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[500px]">
+            <thead className="text-left text-gray-500 uppercase text-xs font-semibold border-b-2 border-gray-200">
+              <tr>
+                <th className="py-2 px-3 w-2/5">Nama Tamu</th>
+                <th className="py-2 px-3 w-2/5">Keperluan</th>
+                <th className="py-2 px-3 w-1/5 text-right">Tanggal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                // Skeleton table dengan 5 baris
                 <tr>
-                  <th className="py-2 px-3 w-2/5">Nama Tamu</th>
-                  <th className="py-2 px-3 w-2/5">Keperluan</th>
-                  <th className="py-2 px-3 w-1/5 text-right">Tanggal</th>
+                  <td colSpan={3} className="py-3">
+                    <TableSkeleton />
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  // Skeleton table dengan 5 baris
-                  <tr>
-                    <td colSpan={3} className="py-3">
-                      <TableSkeleton />
-                    </td>
-                  </tr>
-                ) : recentGuests.length > 0 ? (
-                  recentGuests.map((guest, index) => (
-                    <motion.tr
-                      key={guest.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.1 }}
-                      className="border-b border-gray-100 last:border-b-0"
-                    >
-                      <td className="py-3 px-3 font-medium text-gray-800">
-                        {guest.nama}
-                        {guest.role === "ortu" && (
-                          <span className="block text-xs text-gray-500">
-                            Orang Tua Siswa
-                          </span>
-                        )}
-                        {guest.role === "umum" && guest.instansi && (
-                          <span className="block text-xs text-gray-500">
-                            {guest.instansi}
-                          </span>
-                        )}
-                      </td>
-                      <td className="py-3 px-3 text-gray-600">
-                        {guest.keperluan}
-                      </td>
-                      <td className="py-3 px-3 text-gray-500 text-right">
-                        {guest.tanggal}
-                      </td>
-                    </motion.tr>
-                  ))
-                ) : (
+              ) : recentGuests.length > 0 ? (
+                recentGuests.map((guest, index) => (
                   <motion.tr
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
+                    key={guest.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors"
                   >
-                    <td colSpan={3} className="py-4 text-center text-gray-500">
-                      Tidak ada data tamu
+                    <td className="py-3 px-3 font-medium text-gray-800">
+                      {guest.nama}
+                      {guest.role === "ortu" && (
+                        <span className="block text-xs text-gray-500">
+                          Orang Tua Siswa
+                        </span>
+                      )}
+                      {guest.role === "umum" && guest.instansi && (
+                        <span className="block text-xs text-gray-500">
+                          {guest.instansi}
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-3 px-3 text-gray-600">
+                      {guest.keperluan}
+                    </td>
+                    <td className="py-3 px-3 text-gray-500 text-right">
+                      {guest.tanggal}
                     </td>
                   </motion.tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </motion.div>
-      </div>
+                ))
+              ) : (
+                <motion.tr
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <td colSpan={3} className="py-4 text-center text-gray-500">
+                    Tidak ada data tamu
+                  </td>
+                </motion.tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </motion.div>
     </div>
   );
 };
