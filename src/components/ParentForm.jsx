@@ -161,7 +161,13 @@ const ParentForm = () => {
 
     try {
       const submitData = {
-        ...formData,
+        nama: formData.nama,
+        siswa_id: formData.idsiswa,
+        kontak: formData.kontak,
+        alamat: formData.alamat,
+        pegawai_id: formData.id_pegawai,
+        keperluan: formData.keperluan,
+        foto_tamu: formData.foto_tamu,
         role: "ortu",
       };
 

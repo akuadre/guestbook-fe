@@ -88,7 +88,13 @@ const GeneralGuestForm = () => {
 
     try {
       const submitData = {
-        ...formData,
+        nama: formData.nama,
+        instansi: formData.instansi,
+        kontak: formData.kontak,
+        alamat: formData.alamat,
+        pegawai_id: formData.id_pegawai,
+        keperluan: formData.keperluan,
+        foto_tamu: formData.foto_tamu,
         role: "umum",
       };
 
