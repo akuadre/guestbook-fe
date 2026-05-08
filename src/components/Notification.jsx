@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, AlertTriangle, XCircle, Info } from 'lucide-react';
 
@@ -17,6 +18,13 @@ const colors = {
 };
 
 const Notification = ({ notification, onDismiss }) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
   useEffect(() => {
     if (notification) {
       const timer = setTimeout(() => {
@@ -26,7 +34,9 @@ const Notification = ({ notification, onDismiss }) => {
     }
   }, [notification, onDismiss]);
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {notification && (
         <motion.div
@@ -42,7 +52,8 @@ const Notification = ({ notification, onDismiss }) => {
           </div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 };
 
