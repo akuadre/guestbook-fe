@@ -1,13 +1,13 @@
 // src/components-guestbook/InputField.jsx
-import React from 'react';
-import ReactSelect from 'react-select';
+import React from "react";
+import ReactSelect from "react-select";
 
 // Komponen Input Biasa
 export const InputField = ({
   label,
   id,
   icon: Icon,
-  type = 'text',
+  type = "text",
   placeholder,
   name,
   value,
@@ -22,9 +22,12 @@ export const InputField = ({
       </label>
       <div className="relative">
         {Icon && (
-          <Icon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <Icon
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+            size={18}
+          />
         )}
-        {type === 'textarea' ? (
+        {type === "textarea" ? (
           <textarea
             id={id}
             name={name}
@@ -72,73 +75,78 @@ export const SelectField = ({
   const customStyles = {
     control: (base, state) => ({
       ...base,
-      backgroundColor: 'white',
-      borderColor: state.isFocused ? '#0ea5e9' : '#d1d5db',
-      borderRadius: '0.5rem',
-      paddingLeft: '2.5rem',
-      paddingTop: '0.25rem',
-      paddingBottom: '0.25rem',
-      minHeight: '48px',
-      boxShadow: state.isFocused ? '0 0 0 2px rgba(14, 165, 233, 0.2)' : 'none',
-      '&:hover': {
-        borderColor: state.isFocused ? '#0ea5e9' : '#9ca3af'
+      backgroundColor: "white",
+      borderColor: state.isFocused ? "#0ea5e9" : "#d1d5db",
+      borderRadius: "0.5rem",
+      paddingLeft: "2.5rem",
+      paddingTop: "0.25rem",
+      paddingBottom: "0.25rem",
+      minHeight: "48px",
+      boxShadow: state.isFocused ? "0 0 0 2px rgba(14, 165, 233, 0.2)" : "none",
+      "&:hover": {
+        borderColor: state.isFocused ? "#0ea5e9" : "#9ca3af",
       },
-      fontSize: '1rem'
+      fontSize: "1rem",
     }),
     placeholder: (base) => ({
       ...base,
-      color: '#9ca3af',
-      fontSize: '1rem',
-      fontWeight: 'normal'
+      color: "#9ca3af",
+      fontSize: "1rem",
+      fontWeight: "normal",
     }),
     input: (base) => ({
       ...base,
-      color: '#374151',
-      fontSize: '1rem',
-      padding: '0',
-      margin: '0'
+      color: "#374151",
+      fontSize: "1rem",
+      padding: "0",
+      margin: "0",
     }),
     singleValue: (base) => ({
       ...base,
-      color: '#374151',
-      fontSize: '1rem'
+      color: "#374151",
+      fontSize: "1rem",
     }),
     option: (base, state) => ({
       ...base,
-      backgroundColor: state.isSelected ? '#0ea5e9' : state.isFocused ? '#f0f9ff' : 'white',
-      color: state.isSelected ? 'white' : '#374151',
-      fontSize: '1rem',
-      padding: '0.75rem 1rem',
-      '&:hover': {
-        backgroundColor: '#f0f9ff'
-      }
+      backgroundColor: state.isSelected
+        ? "#0ea5e9"
+        : state.isFocused
+          ? "#f0f9ff"
+          : "white",
+      color: state.isSelected ? "white" : "#374151",
+      fontSize: "1rem",
+      padding: "0.75rem 1rem",
+      "&:hover": {
+        backgroundColor: "#f0f9ff",
+      },
     }),
     menu: (base) => ({
       ...base,
-      borderRadius: '0.5rem',
-      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-      zIndex: 20
+      borderRadius: "0.5rem",
+      boxShadow:
+        "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+      zIndex: 20,
     }),
     dropdownIndicator: (base) => ({
       ...base,
-      color: '#6b7280',
-      '&:hover': {
-        color: '#374151'
-      }
+      color: "#6b7280",
+      "&:hover": {
+        color: "#374151",
+      },
     }),
     indicatorSeparator: (base) => ({
       ...base,
-      backgroundColor: '#d1d5db'
+      backgroundColor: "#d1d5db",
     }),
     loadingIndicator: (base) => ({
       ...base,
-      color: '#6b7280'
+      color: "#6b7280",
     }),
     loadingMessage: (base) => ({
       ...base,
-      color: '#6b7280',
-      fontSize: '0.875rem'
-    })
+      color: "#6b7280",
+      fontSize: "0.875rem",
+    }),
   };
 
   return (
@@ -153,7 +161,10 @@ export const SelectField = ({
       </label>
       <div className="relative">
         {Icon && (
-          <Icon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 z-10" size={18} />
+          <Icon
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 z-10"
+            size={18}
+          />
         )}
         <ReactSelect
           options={options}
@@ -166,7 +177,9 @@ export const SelectField = ({
           required={required}
           isLoading={isLoading}
           loadingMessage={() => loadingMessage}
-          noOptionsMessage={() => isLoading ? loadingMessage : "Tidak ada opsi"}
+          noOptionsMessage={() =>
+            isLoading ? loadingMessage : "Tidak ada opsi"
+          }
           className="text-base"
           {...props}
         />

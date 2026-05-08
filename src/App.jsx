@@ -6,6 +6,8 @@ import {
   Navigate,
   useLocation,
 } from "react-router-dom";
+import LandingPage from "./pages/LandingPage.jsx";
+import GuestbookPage from "./pages/GuestbookPage.jsx";
 import Login from "./pages/Login.jsx";
 import AppLayout from "./layouts/AppLayout.jsx";
 
@@ -79,7 +81,8 @@ function App() {
       <ScrollToTop />
 
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/input" element={<GuestbookPage />} />
 
         {/* Rute untuk halaman Login (Guest Only) */}
         <Route element={<GuestRoute />}>

@@ -1,9 +1,12 @@
-import React from 'react';
+import React from "react";
 
 const FormInput = ({ label, id, ...props }) => {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+      <label
+        htmlFor={id}
+        className="block text-sm font-medium text-gray-700 mb-1"
+      >
         {label}
       </label>
       <input
