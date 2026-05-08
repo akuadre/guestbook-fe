@@ -179,21 +179,7 @@ const ParentForm = () => {
       );
 
       if (response.data.success) {
-        setNotification({ type: "success", text: "Data berhasil disimpan!" });
-        setFormData({
-          nama: "",
-          idsiswa: "",
-          kontak: "",
-          alamat: "",
-          id_pegawai: "",
-          keperluan: "",
-          foto_tamu: "",
-        });
-        setSiswaData({ nis: "", nisn: "", kelas: "-" });
-
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
+        navigate("/?status=success");
       } else {
         setNotification({ type: "error", text: "Gagal menyimpan data: " + response.data.message });
       }

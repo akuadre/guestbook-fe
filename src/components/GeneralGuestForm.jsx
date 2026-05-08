@@ -106,20 +106,7 @@ const GeneralGuestForm = () => {
       );
 
       if (response.data.success) {
-        setNotification({ type: "success", text: "Data berhasil disimpan!" });
-        setFormData({
-          nama: "",
-          instansi: "",
-          kontak: "",
-          alamat: "",
-          id_pegawai: "",
-          keperluan: "",
-          foto_tamu: "",
-        });
-        
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
+        navigate("/?status=success");
       } else {
         setNotification({ type: "error", text: "Gagal menyimpan data: " + response.data.message });
       }

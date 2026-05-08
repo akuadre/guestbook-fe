@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
+import SuccessModal from "../components/SuccessModal";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
 import axios from "axios";
@@ -18,6 +19,20 @@ const LandingPage = () => {
   const [posts, setPosts] = useState([]);
   const [newsError, setNewsError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Detect success status from redirect
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("status") === "success") {
+      setShowSuccessModal(true);
+      // Clean up the URL so it doesn't trigger again on refresh
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location, navigate]);
 
   // Handle scroll effects
   useEffect(() => {
@@ -78,6 +93,12 @@ const LandingPage = () => {
 
   return (
     <div className="bg-gray-50 text-gray-800 font-sans">
+      <SuccessModal 
+        isOpen={showSuccessModal} 
+        onClose={() => setShowSuccessModal(false)} 
+        message="Data berhasil disimpan! Terima kasih telah berkunjung."
+        />
+      
       {/* Keyframe Animations */}
       <style>{`
         @keyframes pulse-glow { 
