@@ -19,7 +19,7 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
-const Navbar = () => {
+const Navbar = ({ isCollapsed, isMobileMenuOpen, setIsMobileMenuOpen }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState("--:--");
@@ -57,7 +57,7 @@ const Navbar = () => {
       setCurrentTime(
         now
           .toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })
-          .replace(".", ":")
+          .replace(".", ":"),
       );
     };
     updateClock();
@@ -89,7 +89,7 @@ const Navbar = () => {
         await axios.post(
           `${API_URL}/logout`,
           {},
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } },
         );
       }
     } catch (err) {
@@ -155,18 +155,28 @@ const Navbar = () => {
 
   return (
     <motion.header
-      className="fixed top-0 left-72 right-0 h-24 bg-white/80 backdrop-blur-xl z-30 border-b border-gray-200/60"
+      className={`fixed top-0 right-0 h-24 bg-white/80 backdrop-blur-xl z-30 border-b border-gray-200/60 transition-all duration-300 ease-in-out ${
+        isCollapsed ? "md:left-20" : "md:left-72"
+      } left-0`}
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
-      <div className="flex justify-between items-center h-full px-8 gap-8">
+      <div className="flex justify-between items-center h-full px-4 md:px-8 gap-4 md:gap-8">
         {/* Left Section - Page Title/Breadcrumb */}
-        <div className="flex-1">
+        <div className="flex-1 flex items-center gap-4">
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+          >
+            <Menu size={24} />
+          </button>
+          <div className="hidden sm:block">
           <h1 className="text-xl font-bold text-gray-800">Dashboard</h1>
           <p className="text-sm text-gray-500">
             Selamat datang kembali, {user.name}
           </p>
+          </div>
         </div>
 
         {/* Center Section - Time & Date */}
@@ -191,70 +201,6 @@ const Navbar = () => {
 
         {/* Right Section - Icons & Profile */}
         <div className="flex items-center gap-3">
-          {/* Help */}
-          <button className="p-2 rounded-lg hover:bg-gray-200/60 transition-colors duration-200">
-            <HelpCircle size={20} className="text-gray-600" />
-          </button>
-
-          {/* Notifications */}
-          <div className="relative" ref={notificationRef}>
-            <button
-              onClick={() => setIsNotificationOpen(!isNotificationOpen)}
-              className="p-2 rounded-lg hover:bg-gray-200/60 transition-colors duration-200 relative"
-            >
-              <Bell size={20} className="text-gray-600" />
-              {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {unreadCount}
-                </span>
-              )}
-            </button>
-
-            <AnimatePresence>
-              {isNotificationOpen && (
-                <motion.div
-                  className="absolute right-0 mt-3 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 z-40"
-                  initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                >
-                  <div className="p-4 border-b border-gray-200">
-                    <h3 className="font-semibold text-gray-900">Notifikasi</h3>
-                  </div>
-                  <div className="max-h-96 overflow-y-auto">
-                    {notifications.map((notification) => (
-                      <div
-                        key={notification.id}
-                        className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
-                          notification.unread ? "bg-blue-50" : ""
-                        }`}
-                      >
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <p className="font-medium text-sm text-gray-900">
-                              {notification.title}
-                            </p>
-                            <p className="text-sm text-gray-600 mt-1">
-                              {notification.message}
-                            </p>
-                          </div>
-                          <span className="text-xs text-gray-400">
-                            {notification.time}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="p-3 border-t border-gray-200">
-                    <button className="w-full text-center text-sm text-blue-600 hover:text-blue-700 font-medium">
-                      Lihat Semua
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
           {/* Profile Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <motion.button

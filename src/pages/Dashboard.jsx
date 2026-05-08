@@ -565,8 +565,8 @@ const Dashboard = () => {
           <h2 className="text-xl font-bold text-gray-800 flex items-center mb-4">
             <UserCheck className="w-6 h-6 mr-2 text-green-500" /> Tamu Terbaru
           </h2>
-          <div>
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[500px]">
               <thead className="text-left text-gray-500 uppercase text-xs font-semibold border-b-2 border-gray-200">
                 <tr>
                   <th className="py-2 px-3 w-2/5">Nama Tamu</th>

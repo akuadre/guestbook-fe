@@ -13,6 +13,9 @@ import {
   User,
   ClipboardList,
   Info,
+  PanelLeftClose,
+  PanelLeftOpen,
+  X,
 } from "lucide-react";
 
 const itemVariants = {
@@ -53,7 +56,7 @@ const dropdownVariants = {
 
 const logoIcon = "/gambar/icon2.png";
 
-const Sidebar = () => {
+const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileMenuOpen, setIsMobileMenuOpen }) => {
   const location = useLocation();
   const [openMenus, setOpenMenus] = useState({});
 
@@ -79,7 +82,7 @@ const Sidebar = () => {
   };
 
   const getLinkClass = ({ isActive }) =>
-    `relative flex items-center justify-between w-full p-3 rounded-2xl transition-all duration-300 group ${
+    `relative flex items-center ${isCollapsed ? "justify-center" : "justify-between"} w-full p-3 rounded-2xl transition-all duration-300 group ${
       isActive
         ? "bg-gradient-to-r from-sky-500/20 to-transparent text-white shadow-inner"
         : "text-gray-400 hover:bg-white/5 hover:text-white"
@@ -103,7 +106,7 @@ const Sidebar = () => {
 
   return (
     // [!] Background Gradient Mewah dan penambahan border kanan lembut
-    <aside className="fixed top-0 left-0 w-72 h-full bg-gradient-to-br from-[#101831] to-[#1a254a] flex flex-col z-40 border-r border-white/10">
+    <aside className={`fixed top-0 left-0 h-full bg-gradient-to-br from-[#101831] to-[#1a254a] flex flex-col z-40 border-r border-white/10 transition-all duration-300 ease-in-out ${isCollapsed ? "w-20" : "w-72"} ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
       {/* App Header - Glassmorphism */}
       {/* <div className="relative px-6 py-5 border-b border-white/10 bg-gradient-to-r from-sky-500/10 to-purple-500/10 backdrop-blur-lg">
         <div className="absolute inset-0 bg-gradient-to-r from-sky-400/5 to-purple-400/5 blur-sm"></div>
@@ -138,14 +141,14 @@ const Sidebar = () => {
 
       {/* App Header - Modern Minimalist */}
       <motion.div
-        className="px-6 py-6 border-b border-white/5 bg-black/20"
+        className={`px-4 py-6 border-b border-white/5 bg-black/20 flex ${isCollapsed ? 'justify-center' : 'justify-between'} items-center`}
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="flex items-center gap-4">
+        <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'}`}>
           <motion.div
-            className="relative"
+            className="relative flex-shrink-0"
             whileHover={{
               scale: 1.05,
               rotate: [0, -5, 5, 0],
@@ -155,28 +158,59 @@ const Sidebar = () => {
             <img
               src={logoIcon}
               alt="App Logo"
-              className="relative h-12 w-12 rounded-lg border border-white/10"
+              className="relative h-10 w-10 md:h-12 md:w-12 rounded-lg border border-white/10"
             />
           </motion.div>
 
-          <div>
-            <Link
-              to="/dashboard"
-              className="text-2xl font-bold text-white block leading-tight"
-            >
-              GuestBook
-            </Link>
-            <motion.p
-              className="text-xs text-gray-400"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              Management System
-            </motion.p>
-          </div>
+          {!isCollapsed && (
+            <div>
+              <Link
+                to="/dashboard"
+                className="text-xl md:text-2xl font-bold text-white block leading-tight truncate"
+              >
+                GuestBook
+              </Link>
+              <motion.p
+                className="text-xs text-gray-400 truncate"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                Management System
+              </motion.p>
+            </div>
+          )}
         </div>
+
+        {/* Toggle Button for Desktop */}
+        {!isCollapsed && (
+          <button 
+            onClick={() => setIsCollapsed(true)}
+            className="hidden md:block text-gray-400 hover:text-white transition-colors cursor-pointer"
+          >
+            <PanelLeftClose size={20} />
+          </button>
+        )}
+
+        {/* Close Button for Mobile */}
+        <button 
+          onClick={() => setIsMobileMenuOpen(false)}
+          className="md:hidden text-gray-400 hover:text-white transition-colors cursor-pointer"
+        >
+          <X size={24} />
+        </button>
       </motion.div>
+      
+      {isCollapsed && (
+          <div className="hidden md:flex justify-center mt-4">
+             <button 
+                onClick={() => setIsCollapsed(false)}
+                className="text-gray-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/5 cursor-pointer"
+             >
+                <PanelLeftOpen size={20} />
+             </button>
+          </div>
+      )}
 
       {/* Navigation Menu */}
       <motion.nav
@@ -185,28 +219,30 @@ const Sidebar = () => {
         initial="hidden"
         animate="visible"
       >
-        <motion.p
-          variants={itemVariants}
-          className="px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-white/5"
-        >
-          Navigation
-        </motion.p>
+        {!isCollapsed && (
+          <motion.p
+            variants={itemVariants}
+            className="px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-white/5 truncate"
+          >
+            Navigation
+          </motion.p>
+        )}
 
         {/* Menu items dengan modern touch */}
         <motion.div variants={itemVariants}>
-          <NavLink to="/dashboard" className={getLinkClass}>
+          <NavLink to="/dashboard" className={getLinkClass} title={isCollapsed ? "Dashboard" : ""}>
             {({ isActive }) => (
-              <div className="flex items-center gap-4">
+              <div className={`flex items-center ${isCollapsed ? "justify-center w-full" : "gap-4"}`}>
                 <div
                   className={`p-2 rounded-lg ${
                     isActive
                       ? "bg-sky-500"
                       : "bg-gray-700 group-hover:bg-sky-500"
-                  } transition-colors duration-300`}
+                  } transition-colors duration-300 flex-shrink-0`}
                 >
                   <LayoutDashboard size={18} />
                 </div>
-                <span>Dashboard</span>
+                {!isCollapsed && <span>Dashboard</span>}
               </div>
             )}
           </NavLink>
@@ -247,18 +283,27 @@ const Sidebar = () => {
             variants={itemVariants}
           >
             <button
-              onClick={() => handleMenuToggle(menu.key)}
+              onClick={() => {
+                if (isCollapsed) {
+                   setIsCollapsed(false);
+                }
+                handleMenuToggle(menu.key);
+              }}
               className={getLinkClass({})}
+              title={isCollapsed ? menu.label : ""}
             >
-              <div className="flex items-center gap-4">
-                <menu.icon size={20} /> <span>{menu.label}</span>
+              <div className={`flex items-center ${isCollapsed ? "justify-center w-full" : "gap-4"}`}>
+                <menu.icon size={20} className="flex-shrink-0" /> 
+                {!isCollapsed && <span className="truncate">{menu.label}</span>}
               </div>
-              <motion.div
-                animate={{ rotate: openMenus[menu.key] ? 90 : 0 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-              >
-                <ChevronRight size={16} />
-              </motion.div>
+              {!isCollapsed && (
+                <motion.div
+                  animate={{ rotate: openMenus[menu.key] ? 90 : 0 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                >
+                  <ChevronRight size={16} />
+                </motion.div>
+              )}
             </button>
 
             <AnimatePresence>
@@ -273,9 +318,9 @@ const Sidebar = () => {
                   <div className="pl-8 ml-4 border-l border-gray-700 space-y-1 pt-1">
                     {menu.sub.map((subItem, index) => (
                       <motion.div key={subItem.path} variants={itemVariants}>
-                        <NavLink to={subItem.path} className={getSubLinkClass}>
-                          <subItem.icon size={16} className="inline mr-2" />
-                          <span>{subItem.label}</span>
+                        <NavLink to={subItem.path} className={getSubLinkClass} title={isCollapsed ? subItem.label : ""}>
+                          <subItem.icon size={16} className="inline mr-2 flex-shrink-0" />
+                          <span className="truncate">{subItem.label}</span>
                         </NavLink>
                       </motion.div>
                     ))}
@@ -292,9 +337,10 @@ const Sidebar = () => {
         className="p-4 border-t border-white/10"
         variants={itemVariants}
       >
-        <Link to="/about" className={getLinkClass({})}>
-          <div className="flex items-center gap-4">
-            <Info size={20} /> <span>Tentang Aplikasi</span>
+        <Link to="/about" className={getLinkClass({})} title={isCollapsed ? "Tentang Aplikasi" : ""}>
+          <div className={`flex items-center ${isCollapsed ? "justify-center w-full" : "gap-4"}`}>
+            <Info size={20} className="flex-shrink-0" />
+            {!isCollapsed && <span className="truncate">Tentang Aplikasi</span>}
           </div>
         </Link>
       </motion.div>
