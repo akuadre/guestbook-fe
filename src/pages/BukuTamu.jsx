@@ -550,14 +550,7 @@ const BukuTamu = () => {
   const getRowNumber = (index) => {
     if (!pagination) return index + 1;
     return pagination.from + index;
-  };
-
-  const clearFilters = () => {
-    setSearchTerm("");
-    setRoleFilter("");
-    setDateFilter("");
-    setCurrentPage(1);
-  };
+  }; 
 
   const getRoleLabel = (role) => {
     switch (role) {
@@ -637,17 +630,6 @@ const BukuTamu = () => {
                 className="pl-11 pr-4 py-2.5 border border-gray-300 rounded-lg w-full bg-gray-50 focus:ring-2 focus:ring-sky-500 outline-none transition"
               />
             </div>
-
-            {/* Clear Filters Button */}
-            {(searchTerm || roleFilter || dateFilter) && (
-              <button
-                onClick={clearFilters}
-                className="px-4 py-2.5 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition flex items-center gap-2 w-full md:w-auto justify-center"
-              >
-                <X size={16} />
-                Hapus Filter
-              </button>
-            )}
           </div>
         </div>
 

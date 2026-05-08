@@ -837,27 +837,12 @@ const Pegawai = () => {
                 className="pl-11 pr-4 py-2.5 border border-gray-300 rounded-lg w-full bg-gray-50 focus:ring-2 focus:ring-sky-500 outline-none transition"
               />
             </div>
-
-            {/* Clear Filters Button */}
-            {(selectedJabatan || searchTerm) && (
-              <button
-                onClick={() => {
-                  setSelectedJabatan("");
-                  setSearchTerm("");
-                  setCurrentPage(1);
-                }}
-                className="px-4 py-2.5 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition flex items-center gap-2 w-full md:w-auto justify-center"
-              >
-                <X size={16} />
-                Hapus Filter
-              </button>
-            )}
           </div>
 
           {/* Tombol Tambah - Paling Kanan */}
           <button
             onClick={() => setIsTambahModalOpen(true)}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2.5 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 font-medium flex items-center gap-2 shadow-lg"
+            className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2.5 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 font-medium flex items-center gap-2 shadow-lg cursor-pointer"
           >
             <Plus size={20} />
             Tambah Pegawai
