@@ -51,7 +51,7 @@ const LandingPage = () => {
       try {
         setIsLoading(true);
         const response = await axios.get(
-          "https://www.smkn1-cmi.sch.id/wp-json/wp/v2/posts?per_page=10&_embed&orderby=date&order=desc"
+          "https://www.smkn1-cmi.sch.id/wp-json/wp/v2/posts?per_page=10&_embed&orderby=date&order=desc",
         );
 
         // Filter posts with featured images
@@ -59,7 +59,7 @@ const LandingPage = () => {
           (post) =>
             post._embedded &&
             post._embedded["wp:featuredmedia"] &&
-            post._embedded["wp:featuredmedia"][0]?.source_url
+            post._embedded["wp:featuredmedia"][0]?.source_url,
         );
 
         setPosts(postsWithImages);
@@ -93,12 +93,12 @@ const LandingPage = () => {
 
   return (
     <div className="bg-gray-50 text-gray-800 font-sans">
-      <SuccessModal 
-        isOpen={showSuccessModal} 
-        onClose={() => setShowSuccessModal(false)} 
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
         message="Data berhasil disimpan! Terima kasih telah berkunjung."
-        />
-      
+      />
+
       {/* Keyframe Animations */}
       <style>{`
         @keyframes pulse-glow { 
@@ -296,27 +296,27 @@ const LandingPage = () => {
                       <div className="block h-[400px] rounded-lg relative overflow-hidden">
                         {/* Background untuk error card */}
                         <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-orange-500/10"></div>
-                        
+
                         {/* Pattern overlay */}
                         <div className="absolute inset-0 bg-[radial-gradient(#ffffff10_1px,transparent_1px)] [background-size:20px_20px]"></div>
-                        
+
                         {/* Content */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-transparent flex flex-col items-center justify-center p-8 text-center">
                           {/* Warning Icon */}
                           <div className="w-20 h-20 bg-yellow-500/20 rounded-full flex items-center justify-center mb-6 border border-yellow-500/30">
-                            <svg 
-                              className="w-10 h-10 text-yellow-300" 
-                              fill="currentColor" 
+                            <svg
+                              className="w-10 h-10 text-yellow-300"
+                              fill="currentColor"
                               viewBox="0 0 20 20"
                             >
-                              <path 
-                                fillRule="evenodd" 
-                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" 
-                                clipRule="evenodd" 
+                              <path
+                                fillRule="evenodd"
+                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                clipRule="evenodd"
                               />
                             </svg>
                           </div>
-                          
+
                           {/* Error Message */}
                           <h3 className="text-2xl font-bold text-yellow-300 mb-4">
                             Berita Tidak Tersedia
@@ -327,14 +327,24 @@ const LandingPage = () => {
                           <p className="text-yellow-400/80 text-sm">
                             Fitur buku tamu tetap dapat digunakan dengan normal
                           </p>
-                          
+
                           {/* Refresh Button */}
                           <button
                             onClick={() => window.location.reload()}
                             className="mt-6 px-6 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-all duration-300 hover:scale-105 flex items-center gap-2"
                           >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                              />
                             </svg>
                             Coba Refresh
                           </button>
@@ -343,11 +353,13 @@ const LandingPage = () => {
                         {/* Fake date untuk konsistensi */}
                         <div className="absolute bottom-6 left-6 flex items-center text-sm text-yellow-300/70">
                           <Calendar size={14} className="mr-2" />
-                          <span>{new Date().toLocaleDateString("id-ID", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
-                          })}</span>
+                          <span>
+                            {new Date().toLocaleDateString("id-ID", {
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                            })}
+                          </span>
                         </div>
                       </div>
                     </SplideSlide>
@@ -399,7 +411,7 @@ const LandingPage = () => {
                                     day: "numeric",
                                     month: "long",
                                     year: "numeric",
-                                  }
+                                  },
                                 )}
                               </span>
                             </div>
@@ -437,7 +449,9 @@ const LandingPage = () => {
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md">
                   <RouterLink
                     to="/input"
-                    onClick={() => localStorage.setItem('guestbookActiveTab', 'parent')}
+                    onClick={() =>
+                      localStorage.setItem("guestbookActiveTab", "parent")
+                    }
                     className="group relative w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium px-8 py-4 text-lg rounded-full shadow-lg hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105 overflow-hidden"
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
@@ -452,7 +466,9 @@ const LandingPage = () => {
 
                   <RouterLink
                     to="/input"
-                    onClick={() => localStorage.setItem('guestbookActiveTab', 'general')}
+                    onClick={() =>
+                      localStorage.setItem("guestbookActiveTab", "general")
+                    }
                     className="group relative w-full sm:w-auto bg-gradient-to-r from-green-500 to-green-600 text-white font-medium px-8 py-4 text-lg rounded-full shadow-lg hover:shadow-green-500/50 transition-all duration-300 hover:scale-105 overflow-hidden"
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
@@ -498,7 +514,8 @@ const LandingPage = () => {
       {/* FOOTER */}
       <footer className="bg-slate-800 text-white text-center py-8 border-t border-slate-700">
         <p className="text-gray-300">
-          © {new Date().getFullYear()} Buku Tamu Digital. Development by
+          © {new Date().getFullYear()} Buku Tamu Digital.
+          <RouterLink to="/dashboard" className="transition-colors duration-300 hover:text-blue-400"> Developed</RouterLink> & Designed by
           Software Engineer SMKN 1 Cimahi.
         </p>
       </footer>

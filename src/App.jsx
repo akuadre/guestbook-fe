@@ -20,6 +20,7 @@ import About from "./pages/About.jsx";
 
 import OrangTua from "./pages/OrangTua.jsx";
 import Jabatan from "./pages/Jabatan.jsx";
+import NotFoundPage from "./pages/NotFoundPage.jsx";
 
 import { GuestRoute, ProtectedRoute } from "./routes/AuthRoutes.jsx";
 
@@ -102,8 +103,8 @@ function App() {
           </Route>
         </Route>
 
-        {/* Jika rute tidak ditemukan, arahkan ke halaman utama */}
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        {/* Jika rute tidak ditemukan, arahkan ke not found page */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
   );

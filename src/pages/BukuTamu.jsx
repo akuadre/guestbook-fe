@@ -550,7 +550,7 @@ const BukuTamu = () => {
   const getRowNumber = (index) => {
     if (!pagination) return index + 1;
     return pagination.from + index;
-  }; 
+  };
 
   const getRoleLabel = (role) => {
     switch (role) {

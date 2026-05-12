@@ -3,13 +3,13 @@ import { motion } from "framer-motion";
 import {
   Mail,
   Lock,
-  Calendar,
   BookOpen,
   Loader,
   AlertCircle,
   School,
+  ArrowLeft,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
@@ -55,7 +55,7 @@ const Login = () => {
         }
         return config;
       },
-      (error) => Promise.reject(error)
+      (error) => Promise.reject(error),
     );
 
     const responseInterceptor = axios.interceptors.response.use(
@@ -67,7 +67,7 @@ const Login = () => {
           navigate("/login");
         }
         return Promise.reject(error);
-      }
+      },
     );
 
     return () => {
@@ -93,7 +93,7 @@ const Login = () => {
         localStorage.setItem("adminToken", response.data.data.access_token);
         localStorage.setItem(
           "userData",
-          JSON.stringify(response.data.data.user)
+          JSON.stringify(response.data.data.user),
         );
 
         // Redirect ke dashboard
@@ -129,14 +129,32 @@ const Login = () => {
       >
         {/* Left Side (Form) */}
         <motion.div
-          className="w-full lg:w-1/2 flex flex-col justify-center p-8 sm:p-12 bg-white"
+          // Tambahin 'relative' di class ini biar tombol back-nya bisa nempel di pojok
+          className="relative w-full lg:w-1/2 flex flex-col justify-center p-8 sm:p-12 bg-white"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
+          {/* --- TOMBOL BACK --- */}
           <motion.div
             variants={itemVariants}
-            className="flex items-center gap-3 mb-8"
+            className="absolute top-6 left-6 sm:top-8 sm:left-12"
+          >
+            <Link
+              to="/"
+              className="group flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-sky-600 transition-colors duration-300"
+            >
+              <ArrowLeft
+                size={16}
+                className="group-hover:-translate-x-1 transition-transform duration-300"
+              />
+              Kembali ke Beranda
+            </Link>
+          </motion.div>
+
+          <motion.div
+            variants={itemVariants}
+            className="flex items-center gap-3 mb-8 mt-8 sm:mt-4" // Kasih margin-top dikit biar gak nabrak tombol back
           >
             <div className="p-2 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 shadow-lg">
               <BookOpen className="w-6 h-6 text-white" />
