@@ -1,16 +1,77 @@
-# React + Vite
+# Guestbook Client 🎨
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Antarmuka (User Interface) interaktif untuk sistem Guestbook Digital. Menghadirkan pengalaman pengguna yang modern, sangat responsif, dilengkapi animasi mulus, serta fitur real-time dashboard untuk pengelolaan admin tingkat lanjut.
 
-Currently, two official plugins are available:
+## 🛠 Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Framework:** React 19 + Vite (SWC Plugin)
+- **Styling:** Tailwind CSS v4, Styled Components
+- **Animations:** Framer Motion
+- **Icons & UI Assets:** Lucide React
+- **Data Fetching:** Axios
+- **Routing:** React Router v7
+- **Charts / Visualisasi:** Chart.js, Recharts, React-Chartjs-2
+- **Utilities Khusus:** React-Webcam (untuk tangkapan kamera/foto tamu secara langsung)
 
-## React Compiler
+## ✨ Features
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+- **High-End UI/UX:** Desain bersih dan modern dengan palet warna Monochrome & Gradient, diperindah dengan transisi interaktif berkinerja tinggi dari Framer Motion.
+- **Persistent Notification System:** Implementasi *Success Modal* kustom berbasis React Portal dengan URL Parameter interception (Bebas dari masalah z-index & stacking context).
+- **Responsive Design:** Kompatibel 100% dan *mobile-first ready* (Desktop, Tablet, dan Mobile).
+- **Interactive Dashboard:** Data tabel informatif, statistik chart, dan sinkronisasi yang stabil dengan backend Laravel API.
+- **Hardware Integration:** Mengambil foto wajah dari kamera hardware perangkat langsung di browser web.
 
-## Expanding the ESLint configuration
+## 📂 Folder Structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Struktur direktori utama di dalam `src/`:
+
+```text
+src/
+├── components/   # Komponen UI Reusable (Navbar, Sidebar, SuccessModal, FormCard, dll)
+├── pages/        # Komponen Halaman penuh (LandingPage, Login, Dashboard, GuestbookPage)
+├── App.jsx       # Root component & Konfigurasi React Router
+├── index.css     # Global styles & Tailwind entry point
+└── main.jsx      # React DOM entry point
+```
+
+## ⚙️ Setup & Instalasi
+
+Ikuti langkah-langkah berikut untuk menjalankan aplikasi client secara lokal:
+
+1. **Clone repositori dan masuk ke direktori frontend:**
+   ```bash
+   cd guestbook-fe
+   ```
+
+2. **Install dependensi NPM:**
+   Gunakan package manager pilihan Anda (contoh: npm):
+   ```bash
+   npm install
+   ```
+
+3. **Konfigurasi Environment Variables:**
+   Buat file bernama `.env` di root folder `guestbook-fe` dan hubungkan ke base URL backend API:
+   ```env
+   VITE_API_URL=http://localhost:8000/api
+   ```
+
+4. **Jalankan Server Development:**
+   Mulai compiler Vite:
+   ```bash
+   npm run dev
+   ```
+   > Aplikasi akan otomatis berjalan pada: `http://localhost:5173`
+
+## 🔗 Demo & Screenshots
+
+> *[Tambahkan link demonstrasi aplikasi atau live hosting di sini]*
+
+**Screenshots:**
+
+*(Ganti tanda '#' dengan path gambar sebenarnya)*
+- ![Landing Page Placeholder](#)
+- ![Admin Dashboard Placeholder](#)
+- ![Success Modal Placeholder](#)
+
+---
+*Dibuat dengan ❤️ untuk kemudahan administrasi digital.*
