@@ -62,7 +62,7 @@ Ikuti langkah-langkah berikut untuk menjalankan aplikasi client secara lokal:
    ```
    > Aplikasi akan otomatis berjalan pada: `http://localhost:5173`
 
-## 🔗 Demo & Screenshots
+<!-- ## 🔗 Demo & Screenshots
 
 > *[Tambahkan link demonstrasi aplikasi atau live hosting di sini]*
 
@@ -74,4 +74,4 @@ Ikuti langkah-langkah berikut untuk menjalankan aplikasi client secara lokal:
 - ![Success Modal Placeholder](#)
 
 ---
-*Dibuat dengan ❤️ untuk kemudahan administrasi digital.*
+*Dibuat dengan ❤️ untuk kemudahan administrasi digital.* -->
